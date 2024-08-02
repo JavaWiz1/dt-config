@@ -1,0 +1,38 @@
+[tool.poetry]
+package-mode = true 
+name = "dt-console"
+version = "0.1.0"
+description = "Console helper tools for CLIs"
+authors = ["Al DAmico <JavaWiz1@hotmail.com>"]
+readme = "README.md"
+license = "MIT"
+reository = "https://github.com/JavaWiz1/dt-console"
+keywords = ["cli", "console", "command-line", "status bar", "progress bar", "python"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+include = ["CHANGELOG.md"]
+
+packages = [
+    { include = "dt_tools" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+loguru = "^0.7"
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "primary"
+
+[[tool.poetry.source]]
+name = "piwheels"
+url = "https://www.piwheels.org/simple"
+priority = "supplemental"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
