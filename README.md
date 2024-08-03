@@ -32,7 +32,7 @@ pip install dt-console
 
 ## Usage
 
-See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-console/dt-tools/console_examples.py) for detailed demo examples (runnable demo)
+See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/develop/dt_tools/console_examples.py) for detailed demo examples (runnable demo)
 
 
 
@@ -60,7 +60,7 @@ See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-console/dt-too
     time.sleep(2)
     console.print_at(row,col,'Finished')
 ```
-
+ConsoleHelper provides methods for managing the console windows.  
 ### ConsoleInputHelper
 ```python
     from dt_tools.console.console_helper import ConsoleInputHelper

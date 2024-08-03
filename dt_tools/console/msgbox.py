@@ -11,7 +11,6 @@ __version__ = "1.0.9"
 
 # Modified BSD License
 # Derived from Stephen Raymond Ferg's EasyGui http://easygui.sourceforge.net/
-
 """
 The four functions in PyMsgBox:
 

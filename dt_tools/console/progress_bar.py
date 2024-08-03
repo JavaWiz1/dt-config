@@ -12,21 +12,39 @@ class ProgressBar():
     Displays progress bar in the console.  To update progress, call display_progress(inc) method to indicate
     current increment count.  When inc varible reaches max_increments value, progress bar will terminate.
 
+    Parameters:
+        :filename: caption         : Prefix text to display
+        :filename: bar_len         : length of bar in characters
+        :filename: max_increments  : max number of increments in the bar
+        :filename: fill            : character to use to display bar fill
+        :filename: str_end         : line end (CR returns to beg of current line-default)
+        :filename: show_elapsed    : display elapsed time to right of progress bar
+
     Example:
+
+    .. code-block:: python
         p_bar = ProgressBar("Sample Execution", bar_line=40, max_increments=100)
         for i in range(99):
             p_bar.display_progress(i+1)
             do something....
-
-    Parameters:
-        caption         : Prefix text to display
-        bar_len         : length of bar in characters
-        max_increments  : max number of increments in the bar
-        fill            : character to use to display bar fill
-        str_end         : line end (CR returns to beg of current line-default)
-        show_elapsed    : display elapsed time to right of progress bar
+    
     """
     def __init__(self, caption: str, bar_length: int, max_increments: int, fill= '█', str_end = "\r", show_elapsed: bool = False):
+        """_summary_
+
+        :param caption: _description_
+        :type caption: str
+        :param bar_length: _description_
+        :type bar_length: int
+        :param max_increments: _description_
+        :type max_increments: int
+        :param fill: _description_, defaults to '█'
+        :type fill: str, optional
+        :param str_end: _description_, defaults to "\r"
+        :type str_end: str, optional
+        :param show_elapsed: _description_, defaults to False
+        :type show_elapsed: bool, optional
+        """
         self._caption = caption
         self._max_increments = max_increments
         self._decimals = 1

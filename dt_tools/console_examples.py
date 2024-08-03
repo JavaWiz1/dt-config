@@ -20,7 +20,7 @@ def console_helper_demo():
     for setting in CursorVisibility:
         console.cursor_visibility = setting
         console.debug_display_cursor_location()
-        console.print_with_wait(f'CURSOR: {setting}', 2, end=' ')
+        console.print_with_wait(f'CURSOR: {setting}', 2, eol=' ')
         print()
     console.clear_screen()
 
@@ -28,7 +28,7 @@ def console_helper_demo():
     for shape in CursorShape:
         console.cursor_shape = shape
         console.debug_display_cursor_location()
-        console.print_with_wait(f'CURSOR: {shape}', 2, end = ' ')
+        console.print_with_wait(f'CURSOR: {shape}', 2, eol = ' ')
         print()
     console.clear_screen()
 

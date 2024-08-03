@@ -6,7 +6,7 @@ description = "Console helper tools for CLIs"
 authors = ["Al DAmico <JavaWiz1@hotmail.com>"]
 readme = "README.md"
 license = "MIT"
-reository = "https://github.com/JavaWiz1/dt-console"
+repository = "https://github.com/JavaWiz1/dt-console"
 keywords = ["cli", "console", "command-line", "status bar", "progress bar", "python"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
@@ -20,7 +20,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.10"
 loguru = "^0.7"
 
 [[tool.poetry.source]]
@@ -32,6 +32,9 @@ name = "piwheels"
 url = "https://www.piwheels.org/simple"
 priority = "supplemental"
 
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^8.0.2"
 
 [build-system]
 requires = ["poetry-core"]
