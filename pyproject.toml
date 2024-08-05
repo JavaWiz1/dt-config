@@ -34,7 +34,8 @@ priority = "supplemental"
 
 
 [tool.poetry.group.dev.dependencies]
-sphinx = "^8.0.2"
+sphinx = "*"
+sphinx-rtd-theme = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core"]

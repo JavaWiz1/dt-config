@@ -1,3 +1,20 @@
+"""
+Spinner control to provide visual feedback of process activity.
+
+Features:
+   - Customizable display.    
+   - Optionally, display elapsed time.
+   - Selectable spinner icons.
+
+Example::
+    from dt_tools.console.spinner import Spinner, SpinnerType
+
+    spinner = Spinner("In progress", SpinnerType.DOTS, True)
+    spinner.start_spinner()
+    # Do some work....
+    spinner.stop_spinner()
+    
+"""
 import threading
 import time
 from datetime import datetime as dt
@@ -25,10 +42,16 @@ class SpinnerType(Enum):
 
 class Spinner():
     """
-    Create a console spinner for visual effect.  The spinner runs on a seperate thread, so
-    the caller can perform processing while the spinner displays.
-    Example:
-        spinner = Spinner("In progress", Spinner.DOTS, True)
+    Create a console spinner for visual effect.  
+    
+    The spinner runs on a seperate thread, so the caller can perform 
+    processing while the spinner displays.
+    
+    Example::
+    
+        from dt_tools.console.spinner import Spinner, SpinnerType
+
+        spinner = Spinner("In progress", SpinnerType.DOTS, True)
         spinner.start_spinner()
         # Do some work....
         spinner.stop_spinner()
@@ -56,7 +79,12 @@ class Spinner():
         LOGGER.trace("Spinner initialized.")
 
     def start_spinner(self, caption_suffix: str = ''):
-        """Start spinner in console"""
+        """
+        Start spinner in console.
+
+        Keyword Arguments:
+            caption_suffix:  Text to append to spinner line (default: {''})
+        """
         if self._spinner_thread:
             # If spinner is currently running, kill it.
             if self._spinner_thread.is_alive():
@@ -70,7 +98,12 @@ class Spinner():
         self._spinner_thread.start()
     
     def stop_spinner(self):
-        """stop spinner in console"""
+        """
+        Stop spinner when running
+
+        Spinner line will be cleared and cursor will be positioned 
+        in column 1 of that row
+        """
         if self._spinner_thread.is_alive():
             self._finished = True
             self._spinner_thread.join()
@@ -80,12 +113,24 @@ class Spinner():
         self.console.cursor_on()
 
     def caption_suffix(self, suffix: str):
-        """Caption suffix, to display status text while running"""
+        """
+        Text to append at end of spinner line.
+
+        Use this to provide updated status text as the spinner is running.
+
+        Arguments:
+            caption_suffix:  Text to append to spinner line
+        """
         self._suffix = suffix
 
     @property
     def elapsed_time(self) -> str:
-        """Return elapsed time in format hh:mm:ss"""
+        """
+        Elapsed time since spinner started.
+
+        Returns:
+            String in format hh:mm:ss
+        """
         return self._elapsed_time
 
     def _calculate_suffix(self) -> str:

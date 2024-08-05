@@ -1,0 +1,33 @@
+.. dt-console documentation master file, created by
+   sphinx-quickstart on Mon Aug  5 10:08:20 2024.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+dt-console documentation
+========================
+
+Package to assist with terminal console input and output.  Several helpers provided to
+simplify console interaction.
+
+- **ConsoleHelper**: Class to assist with console output.
+    - Get console window attributes size, title.
+    - Write to console at specified position.
+    - Colorize output.
+    - Easy status line display.
+- **ConsoleInputHelper**: Enhanced user input prompt.
+    - Vallidation against target list of responses.
+    - Timeout feature to return default value after specified wait time.
+- **ProgressBar**: Progress bar to provide visual feedback of process activity.
+    - Customized display.
+    - Optionally display elapsed time.
+    - Progress bar reflects percent completion of process.
+- **Spinner**: Spinner control to provide visual feedback during long process.
+   - Customizable display.    
+   - Optionally, display elapsed time.
+   - Selectable visual progress icons.
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Contents:
+
+   dt_tools.console

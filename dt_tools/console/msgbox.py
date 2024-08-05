@@ -1,4 +1,21 @@
+"""
+Helper to display tkinter Message box on display
+
+Message boxes provided:
+
+    - alert: Alert message box with message text and single OK button.
+    - confirm: Confirmation message box with OK/Cancel buttons.  Returns caption of button clicked.
+    - prompt: Display message box with text input and OK/Cancel buttons.  Returns text entered, or None if Cancel clicked.
+    - password: Displays a passworkd message box and OK/Cancel buttons.  Input is masked. Returns text entered, or None if Cancel clicked.
+
+Features:
+    - Ability to set Timeout seconds.  Message box will return 'timeout' when triggered.
+    - Confirm message box allows user to customize buttons available.
+
+"""
 import tkinter as tk
+from typing import List, Tuple, Union
+
 from loguru import logger as LOGGER
 
 # This version derived from the below projects:
@@ -42,34 +59,41 @@ TODO Roadmap:
 
 rootWindowPosition = "+300+200"
 
+class MB_FontFamily:
+    """MsgBox Font Types."""
+    PROPORTIONAL = ("MS", "Sans", "Serif")
+    MONOSPACE = "Courier"
 
-PROPORTIONAL_FONT_FAMILY = ("MS", "Sans", "Serif")
-MONOSPACE_FONT_FAMILY = "Courier"
+class MB_FontSize:
+    """Font sizes for MsgBox fonts"""
+    PROPORTIONAL = 10
+    MONOSPACE = (9)  # a little smaller, because it it more legible at a smaller size
+    TEXT = 12        # a little larger makes it easier to see
 
-PROPORTIONAL_FONT_SIZE = 10
-MONOSPACE_FONT_SIZE = (9)  # a little smaller, because it it more legible at a smaller size
-TEXT_ENTRY_FONT_SIZE = 12  # a little larger makes it easier to see
 
-used_font_family = PROPORTIONAL_FONT_FAMILY
-used_font_size = PROPORTIONAL_FONT_SIZE
 MSGBOX_WIDTH = 400
 
 STANDARD_SELECTION_EVENTS = ["Return", "Button-1", "space"]
 
 # constants for strings: (TODO: for internationalization, change these)
-OK_TEXT = "OK"
-CANCEL_TEXT = "Cancel"
-YES_TEXT = "Yes"
-NO_TEXT = "No"
-RETRY_TEXT = "Retry"
-ABORT_TEXT = "Abort"
-IGNORE_TEXT = "Ignore"
-TRY_AGAIN_TEXT = "Try Again"
-CONTINUE_TEXT = "Continue"
+class MB_ButtonType:
+    """Constants for Message box buttons (and captions)."""
+    OK = "OK"
+    CANCEL = "Cancel"
+    YES = "Yes"
+    NO = "No"
+    RETRY = "Retry"
+    ABORT = "Abort"
+    IGNORE = "Ignore"
+    TRY_AGAIN = "Try Again"
+    CONTINUE = "Continue"
 
 TIMEOUT_RETURN_VALUE = "Timeout"
+"""Value returned when MsgBox times out."""
 
 # Initialize some global variables that will be reset later
+_used_font_family = MB_FontFamily.PROPORTIONAL
+_used_font_size = MB_FontSize.PROPORTIONAL
 __choiceboxMultipleSelect = None
 __widgetTexts = None
 __replyButtonText = None
@@ -85,26 +109,61 @@ boxRoot = None
 buttonsFrame = None
 
 
-def _alertTkinter(text="", title="", button=OK_TEXT, root=None, timeout=None):
-    """Displays a simple message box with text and a single OK button. Returns the text of the button clicked on."""
+def set_font(family: MB_FontFamily, size: int=0):
+    """Set font family and font size
+
+    Arguments:
+        family: MB_FontFamily.MONOSPACE or MB_FontFamily.PROPORTIONAL.
+        size: Font size, typically 8-12.  If <= 0 will default to
+          either MB_FontSize.MONOSPACE or MB_FontSize.PROPORTIONAL depending
+          on select family. 
+    """
+    _used_font_family = family
+    if size <= 0:
+        _used_font_size = MB_FontSize.MONOSPACE if _used_font_family == MB_FontFamily.MONOSPACE else MB_FontFamily.PROPORTIONAL
+    else:
+        _used_font_size = size
+
+
+def _alertTkinter(text="", title="", button=MB_ButtonType.OK, root=None, timeout=None):
+    """
+    Displays a simple message box with text and a single OK button. 
+
+    Keyword Arguments:
+        text: Text content of the message box (default: {""})
+        title: Title bar text (default: {""})
+        button: Button caption (default: {MB_ButtonType.OK})
+        root: Base window (default: {None})
+        timeout: Number of seconds to display box (default: {None})
+
+    Returns:
+        The text of the button clicked on.
+    """
     text = str(text)
     retVal = _buttonbox(
         msg=text, title=title, choices=[str(button)], root=root, timeout=timeout
     )
-
-    if retVal is None:
-        return button
-    else:
-        return retVal
-
+    return button if retVal is None else retVal
 
 alert = _alertTkinter
 
 
 def _confirmTkinter(
-    text="", title="", buttons=(OK_TEXT, CANCEL_TEXT), root=None, timeout=None
-):
-    """Displays a message box with OK and Cancel buttons. Number and text of buttons can be customized. Returns the text of the button clicked on."""
+    text="", title="", buttons=(MB_ButtonType.OK, MB_ButtonType.CANCEL), root=None, timeout=None):
+    """
+    Displays a Confirmation message box with text and Ok / Cancel buttons. 
+
+    Keyword Arguments:
+        text: Text content of the message box (default: {""})
+        title: Title bar text (default: {""})
+        buttons: A list of button text (default: {(MB_ButtonType.OK, MB_ButtonType.CANCEL)})
+        root: Base window (default: {None})
+        timeout: Number of seconds to display box (default: {None})
+
+    Returns:
+        The text of the button clicked on.
+    """
+
     text = str(text)
     resp = _buttonbox(
         msg=text,
@@ -116,12 +175,23 @@ def _confirmTkinter(
 
     return resp
 
-
 confirm = _confirmTkinter
 
 
 def _promptTkinter(text="", title="", default="", root=None, timeout=None):
-    """Displays a message box with text input, and OK & Cancel buttons. Returns the text entered, or None if Cancel was clicked."""
+    """
+    Displays a message box with text input, and OK & Cancel buttons. 
+
+    Keyword Arguments:
+        text: Text content of the message box (default: {""})
+        title: Title bar text (default: {""})
+        default: Default text on timeout (default: {""})
+        root: Base window (default: {None})
+        timeout: Number of seconds to display box (default: {None})
+
+    Returns:
+        Returns the text entered, or None if Cancel was clicked.
+    """
     text = str(text)
     return __fillablebox(
         text, title, default=default, mask=None, root=root, timeout=timeout
@@ -132,10 +202,24 @@ prompt = _promptTkinter
 
 
 def _passwordTkinter(text="", title="", default="", mask="*", root=None, timeout=None):
-    """Displays a message box with text input, and OK & Cancel buttons. Typed characters appear as *. Returns the text entered, or None if Cancel was clicked."""
+    """
+    Displays a message box with text input, and OK & Cancel buttons. 
+    
+    By default, typed characters are masked as an asterisk(\*) symbol. 
+
+    Keyword Arguments:
+        text: Text content of the message box (default: {""})
+        title: Title bar text (default: {""})
+        mask: Mask character to display on user keystrokes (default: {"*"})
+        default: Default text on timeout (default: {""})
+        root: Base window (default: {None})
+        timeout: Number of seconds to display box (default: {None})
+
+    Returns:
+        Returns the text entered, or None if Cancel was clicked.
+    """
     text = str(text)
     return __fillablebox(text, title, default, mask=mask, root=root, timeout=timeout)
-
 
 password = _passwordTkinter
 
@@ -151,16 +235,25 @@ def timeoutBoxRoot():
     __enterboxText = TIMEOUT_RETURN_VALUE
 
 
-def _buttonbox(msg, title, choices, root=None, timeout=None):
+def _buttonbox(msg: str, title: str, choices: Union[List,Tuple], root=None, timeout=None):
     """
     Display a msg, a title, and a set of buttons.
-    The buttons are defined by the members of the choices list.
-    Return the text of the button that the user selected.
 
-    @arg msg: the msg to be displayed.
-    @arg title: the window title
-    @arg choices: a list or tuple of the choices to be displayed
+    The buttons are defined by the members of the choices list.
+
+    Arguments:
+        msg: Text content of the message box
+        title: Title bar text
+        choices: A list or tuple of the choices to be displayed
+
+    Keyword Arguments:
+        root: Base window (default: {None})
+        timeout: Number of seconds to display box (default: {None})
+
+    Returns:
+        Text caption of the Button clicked.
     """
+
     global boxRoot, __replyButtonText, __widgetTexts, buttonsFrame
 
     # Initialize __replyButtonText to the first choice.
@@ -190,8 +283,8 @@ def _buttonbox(msg, title, choices, root=None, timeout=None):
 
     # -------------------- place the widgets in the frames -----------------------
     messageWidget = tk.Message(messageFrame, text=msg, width=MSGBOX_WIDTH)
-    # messageWidget.configure(font=(PROPORTIONAL_FONT_FAMILY, PROPORTIONAL_FONT_SIZE))
-    messageWidget.configure(font=(used_font_family, used_font_size))
+    # messageWidget.configure(font=(MB_FontFamily.PROPORTIONAL, MB_FontSize.PROPORTIONAL))
+    messageWidget.configure(font=(_used_font_family, _used_font_size))
     messageWidget.pack(side=tk.TOP, expand=tk.YES, fill=tk.X, padx="3m", pady="3m")
 
     __put_buttons_in_buttonframe(choices)
@@ -250,7 +343,7 @@ def __put_buttons_in_buttonframe(choices):
         for selectionEvent in STANDARD_SELECTION_EVENTS:
             commandButton.bind("<%s>" % selectionEvent, handler)
 
-        if CANCEL_TEXT in choices:
+        if MB_ButtonType.CANCEL in choices:
             commandButton.bind("<Escape>", __cancelButtonEvent)
 
 
@@ -283,7 +376,7 @@ def __buttonEvent(event):
 def __cancelButtonEvent(event):
     """Handle pressing Esc by clicking the Cancel button."""
     global boxRoot, __widgetTexts, __replyButtonText
-    __replyButtonText = CANCEL_TEXT
+    __replyButtonText = MB_ButtonType.CANCEL
     boxRoot.quit()
 
 
@@ -336,15 +429,15 @@ def __fillablebox(msg, title="", default="", mask=None, root=None, timeout=None)
 
     # -------------------- the msg widget ----------------------------
     messageWidget = tk.Message(messageFrame, width="4.5i", text=msg)
-    # messageWidget.configure(font=(PROPORTIONAL_FONT_FAMILY, PROPORTIONAL_FONT_SIZE))
-    messageWidget.configure(font=(used_font_family, used_font_size))
+    # messageWidget.configure(font=(MB_FontFamily.PROPORTIONAL, MB_FontSize.PROPORTIONAL))
+    messageWidget.configure(font=(_used_font_family, _used_font_size))
     messageWidget.pack(side=tk.RIGHT, expand=1, fill=tk.BOTH, padx="3m", pady="3m")
 
     # --------- entryWidget ----------------------------------------------
     entryWidget = tk.Entry(entryFrame, width=40)
     _bindArrows(entryWidget, skipArrowKeys=True)
-    # entryWidget.configure(font=(PROPORTIONAL_FONT_FAMILY, TEXT_ENTRY_FONT_SIZE))
-    entryWidget.configure(font=(used_font_family, TEXT_ENTRY_FONT_SIZE))
+    # entryWidget.configure(font=(MB_FontFamily.PROPORTIONAL, TEXT_ENTRY_FONT_SIZE))
+    entryWidget.configure(font=(_used_font_family, MB_FontSize.TEXT))
     if mask:
         entryWidget.configure(show=mask)
     entryWidget.pack(side=tk.LEFT, padx="3m")
@@ -357,7 +450,7 @@ def __fillablebox(msg, title="", default="", mask=None, root=None, timeout=None)
         entryWidget.select_range(0, tk.END)
 
     # ------------------ ok button -------------------------------
-    okButton = tk.Button(buttonsFrame, takefocus=1, text=OK_TEXT)
+    okButton = tk.Button(buttonsFrame, takefocus=1, text=MB_ButtonType.OK)
     _bindArrows(okButton)
     okButton.pack(expand=1, side=tk.LEFT, padx="3m", pady="3m", ipadx="2m", ipady="1m")
 
@@ -368,7 +461,7 @@ def __fillablebox(msg, title="", default="", mask=None, root=None, timeout=None)
         commandButton.bind("<%s>" % selectionEvent, handler)
 
     # ------------------ cancel button -------------------------------
-    cancelButton = tk.Button(buttonsFrame, takefocus=1, text=CANCEL_TEXT)
+    cancelButton = tk.Button(buttonsFrame, takefocus=1, text=MB_ButtonType.CANCEL)
     _bindArrows(cancelButton)
     cancelButton.pack(
         expand=1, side=tk.RIGHT, padx="3m", pady="3m", ipadx="2m", ipady="1m"
@@ -425,12 +518,11 @@ def __enterboxCancel(event):
     __enterboxText = None
     boxRoot.quit()
 
-
-
 if __name__ == "__main__":
     alert('This is an alert box', 'ALERT1')
-    used_font_family = MONOSPACE_FONT_FAMILY
-    used_font_size = MONOSPACE_FONT_SIZE
+    _used_font_family = MB_FontFamily.MONOSPACE
+    _used_font_size = MB_FontSize.MONOSPACE
+
     # MSGBOX_WIDTH = 600
     txt = ''
     for k,v in tk.__dict__.items():

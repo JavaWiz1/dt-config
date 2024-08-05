@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dt_tools.console.console_helper &mdash; dt-console  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dt-console
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dt_tools.console.html">dt_tools.console namespace</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dt-console</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dt_tools.console.console_helper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dt_tools.console.console_helper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Console utilities for controlling terminal screen.</span>
+
+
+<span class="sd">Package contains two main classes for working with console windows and text.</span>
+
+<span class="sd">- **ConsoleHelper**: Class to aid in console window control and text output including</span>
+<span class="sd">    - writing to specific locations.</span>
+<span class="sd">    - clearing portions of the screen</span>
+<span class="sd">    - colorized output</span>
+
+<span class="sd">- **ConsoleInputHelper**: Class providing input prompt with:</span>
+<span class="sd">    - Input field editing (i.e. controlling valid input)</span>
+<span class="sd">    - Wait time, timeout before default response is returned</span>
+
+
+<span class="sd">Additionally, helper classes/namespaces provided:</span>
+
+<span class="sd">- **ConsoleColor**: Color codes for ansi output (see cwrap() function).</span>
+<span class="sd">- **CursorShape**: Ansi codes for controlling cursor shape.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">LOGGER</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">msvcrt</span>
+    <span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">byref</span><span class="p">,</span> <span class="n">windll</span><span class="p">,</span> <span class="n">wintypes</span>  <span class="c1"># noqa: F401</span>
+
+<span class="c1"># TODO:</span>
+<span class="c1">#   update _output_to_terminal to allow for printing to stderr OR stdout (default)</span>
+
+<span class="k">class</span> <span class="nc">_ConsoleControl</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Console control characters.&quot;&quot;&quot;</span>
+    <span class="n">ESC</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u001b</span><span class="s1">&#39;</span>
+    <span class="n">BELL</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\a</span><span class="s1">&#39;</span>
+    <span class="n">CEND</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m&#39;</span>
+
+<div class="viewcode-block" id="ConsoleColors">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleColors">[docs]</a>
+<span class="k">class</span> <span class="nc">ConsoleColors</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Console Colors to be used with cwrap().&quot;&quot;&quot;</span>
+    <span class="n">CBOLD</span><span class="p">:</span> <span class="n">Final</span>     <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
+    <span class="n">CITALIC</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3m&#39;</span>
+    <span class="n">CURL</span><span class="p">:</span> <span class="n">Final</span>      <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4m&#39;</span>
+    <span class="n">CBLINK</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[5m&#39;</span>
+    <span class="n">CBLINK2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[6m&#39;</span>
+    <span class="n">CSELECTED</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[7m&#39;</span>
+
+    <span class="n">CBLACK</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[30m&#39;</span>
+    <span class="n">CRED</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[31m&#39;</span>
+    <span class="n">CGREEN</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[32m&#39;</span>
+    <span class="n">CYELLOW</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[33m&#39;</span>
+    <span class="n">CBLUE</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[34m&#39;</span>
+    <span class="n">CVIOLET</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[35m&#39;</span>
+    <span class="n">CBEIGE</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[36m&#39;</span>
+    <span class="n">CWHITE</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[37m&#39;</span>
+
+    <span class="n">CBLACKBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[40m&#39;</span>
+    <span class="n">CREDBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[41m&#39;</span>
+    <span class="n">CGREENBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[42m&#39;</span>
+    <span class="n">CYELLOWBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[43m&#39;</span>
+    <span class="n">CBLUEBG</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[44m&#39;</span>
+    <span class="n">CVIOLETBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[45m&#39;</span>
+    <span class="n">CBEIGEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[46m&#39;</span>
+    <span class="n">CWHITEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[47m&#39;</span>
+
+    <span class="n">CGREY</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[90m&#39;</span>
+    <span class="n">CRED2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[91m&#39;</span>
+    <span class="n">CGREEN2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[92m&#39;</span>
+    <span class="n">CYELLOW2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[93m&#39;</span>
+    <span class="n">CBLUE2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[94m&#39;</span>
+    <span class="n">CVIOLET2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[95m&#39;</span>
+    <span class="n">CBEIGE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[96m&#39;</span>
+    <span class="n">CWHITE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[97m&#39;</span>
+
+    <span class="n">CGREYBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[100m&#39;</span>
+    <span class="n">CREDBG2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[101m&#39;</span>
+    <span class="n">CGREENBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[102m&#39;</span>
+    <span class="n">CYELLOWBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[103m&#39;</span>
+    <span class="n">CBLUEBG2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[104m&#39;</span>
+    <span class="n">CVIOLETBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[105m&#39;</span>
+    <span class="n">CBEIGEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[106m&#39;</span>
+    <span class="n">CWHITEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[107m&#39;</span></div>
+
+
+<div class="viewcode-block" id="CursorShape">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.CursorShape">[docs]</a>
+<span class="k">class</span> <span class="nc">CursorShape</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constants defining available cursor shapes.&quot;&quot;&quot;</span>
+    <span class="n">DEFAULT</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0 q&#39;</span>
+    <span class="n">BLINKING_BLOCK</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1 q&#39;</span>
+    <span class="n">STEADY_BLOCK</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[2 q&#39;</span>
+    <span class="n">BLINKING_UNDERLINE</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3 q&#39;</span>
+    <span class="n">STEADY_UNDERLINE</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4 q&#39;</span>
+    <span class="n">BLINKING_BAR</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[5 q&#39;</span>
+    <span class="n">STEADY_BAR</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[6 q&#39;</span></div>
+
+
+<span class="k">class</span> <span class="nc">_FormatControls</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constants for formatting strings.&quot;&quot;&quot;</span>
+    <span class="n">end</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m&#39;</span>
+    <span class="n">underline</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4m&#39;</span>
+    <span class="n">bold</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
+    <span class="n">spacer</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="s1">&#39; ͏&#39;</span>
+
+<span class="k">class</span> <span class="nc">_CursorAttribute</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cursor control characters (Visability, Blink?).&quot;&quot;&quot;</span>
+    <span class="n">HIDE</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[?25l&#39;</span>
+    <span class="n">SHOW</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[?25h&#39;</span>
+    <span class="n">SOLID</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[?12l&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solid (non-blinking) Cursor&quot;&quot;&quot;</span>
+    <span class="n">BLINKING</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[?12h&#39;</span> <span class="c1"># Does not work (sometimes)?</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Blinking Cursor&quot;&quot;&quot;</span>
+
+<span class="k">class</span> <span class="nc">_CursorClear</span><span class="p">:</span>
+    <span class="n">EOS</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0J&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear to End-Of-Screen.&quot;&quot;&quot;</span>
+    <span class="n">BOS</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1J&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear to Beginning-Of-Screen.&quot;&quot;&quot;</span>
+    <span class="n">LINE</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[2K&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear current line.&quot;&quot;&quot;</span>
+    <span class="n">EOL</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0K&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear from current position to End-Of-Line.&quot;&quot;&quot;</span>
+    <span class="n">BOL</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1K&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear from current position to Beginning-Of-Line.&quot;&quot;&quot;</span>
+    <span class="n">SCREEN</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[2J&#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear entire screen.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WindowControl">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.WindowControl">[docs]</a>
+<span class="k">class</span> <span class="nc">WindowControl</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Window control characters (Hide/Show, Title).&quot;&quot;&quot;</span>
+    <span class="n">WINDOW_HIDE</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[2t&#39;</span>
+    <span class="n">WINDOW_SHOW</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1t&#39;</span>
+    <span class="n">WINDOW_TITLE</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">]2;%title%</span><span class="se">\a</span><span class="s1">&#39;</span></div>
+
+
+
+<span class="c1"># https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences</span>
+<span class="c1"># https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html</span>
+<span class="c1"># https://invisible-island.net/xterm/ctlseqs/ctlseqs.html</span>
+
+<span class="c1"># ==========================================================================================================</span>
+<div class="viewcode-block" id="ConsoleHelper">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ConsoleHelper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to assist with console output.  </span>
+<span class="sd">    </span>
+<span class="sd">    Methods to:</span>
+
+<span class="sd">        - Set cursor shape and visibility.</span>
+<span class="sd">        - Set console window title.</span>
+<span class="sd">        - Clear functions.</span>
+<span class="sd">        - Cursor control (up, down, left, right, move to location,...).</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        con = ConsoleHelper()</span>
+<span class="sd">        con.clear_screen(cursor_home=True)</span>
+
+<span class="sd">        console_size = con.get_console_size()</span>
+<span class="sd">        row, col = con.cursor_current_position()</span>
+<span class="sd">        print_at(5,5, f&#39;Console size: {console_size}, cur pos: {row},{col}&#39;, eol=&#39;\\n&#39;)</span>
+<span class="sd">        </span>
+<span class="sd">        token = f&#39;Test {con.cwrap(&quot;Yellow&quot;, ConsoleColors.CYELLOW)} string&#39;)</span>
+<span class="sd">        con.print_at(5, 10, token)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LAST_CONSOLE_STR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_cursor_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="n">_CursorAttribute</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">cursor_attribute</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">_cursor_attribute</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_cursor_shape</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="n">CursorShape</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">cursor_shape</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">_cursor_shape</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="ConsoleHelper.console_hide">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.console_hide">[docs]</a>
+    <span class="k">def</span> <span class="nf">console_hide</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minimize console/terminal window&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">WindowControl</span><span class="o">.</span><span class="n">WINDOW_HIDE</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ConsoleHelper.console_show">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.console_show">[docs]</a>
+    <span class="k">def</span> <span class="nf">console_show</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore console/terminal window&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">WindowControl</span><span class="o">.</span><span class="n">WINDOW_SHOW</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="ConsoleHelper.console_title">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.console_title">[docs]</a>
+    <span class="k">def</span> <span class="nf">console_title</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the console/window title.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            title: String to be displayed on the title bar.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">title_cmd</span> <span class="o">=</span> <span class="n">WindowControl</span><span class="o">.</span><span class="n">WINDOW_TITLE</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;%title%&quot;</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">title_cmd</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">title_cmd</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_off">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_off">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_off</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorAttribute</span><span class="o">.</span><span class="n">HIDE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_on">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_on">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_on</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Turn console cursor on&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorAttribute</span><span class="o">.</span><span class="n">SHOW</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.clear_to_EOS">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_to_EOS">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_to_EOS</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear from cursor to end of screen&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">EOS</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.clear_to_BOS">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_to_BOS">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_to_BOS</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear from cursor to beginning of screen&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">BOS</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.clear_line">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_line">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_line</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear current line&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">LINE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.clear_to_EOL">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_to_EOL">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_to_EOL</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear from cursor to end of line&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">EOL</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ConsoleHelper.clear_to_BOL">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_to_BOL">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_to_BOL</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear from cursor to beginning of line&quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">BOL</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.clear_screen">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.clear_screen">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_screen</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cursor_home</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear screen and home cursor.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            cursor_home: If true home cursor else leave at current position (default: {True}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">_CursorClear</span><span class="o">.</span><span class="n">SCREEN</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cursor_home</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_up">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_up">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_up</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move cursor up.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of rows to move up (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">A&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_down">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_down">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_down</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move cursor down.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of rows to move down (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">B&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_right">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_right">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_right</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move cursor right.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of columns to move right (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">C&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_left">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_left">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_left</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move cursor left.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of columns to move left (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">D&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_scroll_up">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_scroll_up">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_scroll_up</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scroll screen contents up.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of row to scroll up (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">S&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_scroll_down">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_scroll_down">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_scroll_down</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scroll screen contents down.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            steps: Number of row to scroll down (default: {1}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">steps</span><span class="si">}</span><span class="s1">T&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_move">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_move">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_move</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Move cursor to specific location on console.</span>
+
+<span class="sd">        If row or column is not set, current position (row or column) will be used.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            row: Row to move cursor (default: {-1}).</span>
+<span class="sd">            column: Column to move cursor (default: {-1}).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if successful, False if location not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cur_row</span><span class="p">,</span> <span class="n">cur_col</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">()</span>
+        <span class="k">if</span>  <span class="n">row</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_row</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cur_col</span><span class="p">)</span>
+        <span class="n">max_rows</span><span class="p">,</span> <span class="n">max_columns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">column</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;cursor_move - row/column must be &gt; 0&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="o">&gt;</span> <span class="n">max_columns</span> <span class="ow">or</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="n">max_rows</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">((</span><span class="sa">f</span><span class="s1">&#39;cursor_move - row &gt; </span><span class="si">{</span><span class="n">max_rows</span><span class="si">}</span><span class="s1"> or col &gt; </span><span class="si">{</span><span class="n">max_columns</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s2">[%d;%dH&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">))</span>    
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.print_at">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.print_at">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_at</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print text at specific location on console.</span>
+
+<span class="sd">        No new-line will occur unless eol parameter is specifed as &#39;\\n&#39;.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            row: Target row.</span>
+<span class="sd">            col: Target column.</span>
+<span class="sd">            text: String to write to console.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            eol: _description_ (default: {&#39;&#39;}).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if print to console successful, False if invalid location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">eol</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+        
+<div class="viewcode-block" id="ConsoleHelper.cursor_current_position">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_current_position">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_current_position</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Current cursor location.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Cusor location: (row, col).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">[6n&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">kbhit</span><span class="p">():</span>
+                <span class="n">buffer</span> <span class="o">+=</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+            <span class="n">hex_loc</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="c1"># print(hex_loc)</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">hex_loc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s1">&#39;stty size&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">col</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_save_position">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_save_position">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_save_position</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save cursor position, can be restored with restore_position() call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[s&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cursor_restore_position">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_restore_position">[docs]</a>
+    <span class="k">def</span> <span class="nf">cursor_restore_position</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Restore cursor position, saved with the save_position() call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[u&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.get_console_size">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.get_console_size">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_console_size</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return console size in rows and columns.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Size as (rows, columns).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;LINES&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;COLUMNS&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">columns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.set_viewport">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.set_viewport">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_viewport</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">start_row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_row</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set console scrollable area to start_row / end_row.  Default is whole screen.</span>
+
+<span class="sd">        The viewport defines area (rows) text scrolls within.  If no</span>
+<span class="sd">        arguments provided, viewport is defaulted to whole screen.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            start_row: Staring row of viewport (default: {None}).</span>
+<span class="sd">            end_row: Ending row of viewport (default: {None}).</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Invalid start|end row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">max_row</span><span class="p">,</span> <span class="n">max_col</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
+        <span class="n">starting_row</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">start_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">start_row</span>
+        <span class="n">ending_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_row</span><span class="p">)</span> <span class="k">if</span> <span class="n">end_row</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">end_row</span>
+        <span class="k">if</span> <span class="n">starting_row</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">starting_row</span> <span class="o">&gt;</span> <span class="n">ending_row</span> <span class="ow">or</span> <span class="n">starting_row</span> <span class="o">&gt;</span> <span class="n">max_row</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;set_viewport(): Invalid start row: </span><span class="si">{</span><span class="n">start_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ending_row</span> <span class="o">&gt;</span> <span class="n">max_row</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;set_viewport(): Invalid end row: </span><span class="si">{</span><span class="n">end_row</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_output_to_terminal</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">starting_row</span><span class="si">}</span><span class="s1">;</span><span class="si">{</span><span class="n">ending_row</span><span class="si">}</span><span class="s1">r&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.display_status">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.display_status">[docs]</a>
+    <span class="k">def</span> <span class="nf">display_status</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display status message on last row of screen.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            text: Status message to be displayed.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            wait: Number of seconds to wait/pause (default: {0}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_row</span><span class="p">,</span> <span class="n">max_col</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
+
+        <span class="n">save_row</span><span class="p">,</span> <span class="n">save_col</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">()</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">print_at</span><span class="p">(</span><span class="n">max_row</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>     
+        <span class="bp">cls</span><span class="o">.</span><span class="n">clear_to_EOL</span><span class="p">()</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">save_row</span><span class="p">,</span> <span class="n">save_col</span><span class="p">)</span>   
+        <span class="k">if</span> <span class="n">wait</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.sprint_line_separator">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.sprint_line_separator">[docs]</a>
+    <span class="k">def</span> <span class="nf">sprint_line_separator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return string underline (seperator) with optional text.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            text: Text to be displayed within the separator line (default: {&#39;&#39;}).</span>
+<span class="sd">            length: Length of the separator line  (default: {-1}).</span>
+<span class="sd">            if &lt; 0, use console width.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Separator line string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">()</span>
+            <span class="n">max_rows</span><span class="p">,</span> <span class="n">max_cols</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">max_cols</span> <span class="o">-</span> <span class="n">col</span>
+        <span class="n">fill_len</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">line_out</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_FormatControls</span><span class="o">.</span><span class="n">underline</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="p">(</span><span class="n">fill_len</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">_FormatControls</span><span class="o">.</span><span class="n">spacer</span><span class="si">}{</span><span class="n">_FormatControls</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">line_out</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.print_line_seperator">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.print_line_seperator">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_line_seperator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print line separator at current cursor position.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            text: Text to be displayed within the separator line (default: {&#39;&#39;}).</span>
+<span class="sd">            length: Lenght of the separator line  (default: {-1}).</span>
+<span class="sd">            if &lt; 0, use console width.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">sprint_line_separator</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.debug_display_cursor_location">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.debug_display_cursor_location">[docs]</a>
+    <span class="k">def</span> <span class="nf">debug_display_cursor_location</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display current location (row, col) in status area.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            msg: Message text to append after current location (default: {&quot;&quot;}).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">display_status</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cursor: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ConsoleHelper</span><span class="p">()</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">())</span><span class="si">}</span><span class="s1">  </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.print_with_wait">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.print_with_wait">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_with_wait</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Print text at current location and wait specified number of seconds.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            text: Text to be printed.</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            wait: Number of seconds to wait (default: {0.0}).</span>
+<span class="sd">            eol: EndOfLine character (default: {&#39;\\n&#39;}).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">eol</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wait</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHelper.cwrap">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cwrap">[docs]</a>
+    <span class="k">def</span> <span class="nf">cwrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrap text with color codes for display.</span>
+
+<span class="sd">        See ConsoleColors for available colors and control codes.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            text: String containing text to adjust.</span>
+<span class="sd">            color: Escape codes for color (see ConsoleColors).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Updated string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">CEND</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_output_to_terminal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eol</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">eol</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">LAST_CONSOLE_STR</span> <span class="o">=</span> <span class="n">token</span>
+
+    <span class="k">def</span> <span class="nf">_dump_color_palette</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
+                <span class="n">colors</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">m</span><span class="se">\\</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">m</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m &#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span></div>
+
+
+<span class="c1"># ==========================================================================================================</span>
+<div class="viewcode-block" id="ConsoleInputHelper">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleInputHelper">[docs]</a>
+<span class="k">class</span> <span class="nc">ConsoleInputHelper</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper for getting input from the console.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        ih = ConsoleInputHelper()</span>
+<span class="sd">        resp = ih.get_input_with_timeout(prompt=&#39;Pick a color &gt; &#39;, </span>
+<span class="sd">            valid_responses=[&#39;Red&#39;, &#39;Blue&#39;, &#39;Green&#39;], </span>
+<span class="sd">            default=&#39;Blue&#39;, </span>
+<span class="sd">            timeout_secs=5)</span>
+<span class="sd">        print(f&#39;You selected: {resp}&#39;)    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">YES_NO_RESPONSE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yes/No valid_argument list constant&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConsoleInputHelper.get_input_with_timeout">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleInputHelper.get_input_with_timeout">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_input_with_timeout</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">valid_responses</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[],</span>  
+                               <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> 
+                               <span class="n">parms_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display a prompt for use input.  </span>
+<span class="sd">        </span>
+<span class="sd">        If valid_responses is supplied:</span>
+<span class="sd">            - input will be validated.  User will be re-prompted on bad input. </span>
+<span class="sd">            - default response will be returned after timeout (if specified).</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            **prompt**: Text to be displayed as prompt.</span>
+<span class="sd">            **valid_responses**: A list of valid responses (default: {[]}).</span>
+<span class="sd">              User input must match one of the values. </span>
+<span class="sd">              If list is empty, all input will be accepted.</span>
+<span class="sd">            **default**: Default value to be return on timeout (default: {None}).</span>
+<span class="sd">            **timeout_secs**: Number of seconds to wait for response (default: {-1}).  </span>
+<span class="sd">              If &lt;0, no timeout, wait until user presses enter.</span>
+<span class="sd">            **parms_ok**: Allow extra parameter input (default: {False}).</span>
+<span class="sd">              If True, allows user to provide additional text after the valid response.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            User input or default value (if timeout).</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            ih = ConsoleInputHelper()</span>
+<span class="sd">            resp = ih.get_input_with_timeout(prompt=&#39;Pick a color &gt; &#39;, </span>
+<span class="sd">                valid_responses=[&#39;Red&#39;, &#39;Blue&#39;, &#39;Green&#39;], </span>
+<span class="sd">                default=&#39;Blue&#39;, </span>
+<span class="sd">                timeout_secs=5)</span>
+<span class="sd">            print(f&#39;You selected: {resp}&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">chk_response</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">response_params</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">valid_input</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">valid_input</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timeout_secs</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+                        <span class="n">response</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_input_with_timeout_win</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">response</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_input_with_timeout_nix</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">default</span>
+                    <span class="n">valid_input</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">parms_ok</span><span class="p">:</span>
+                <span class="n">chk_response</span> <span class="o">=</span> <span class="n">response</span>
+                <span class="n">response_params</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">chk_response</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">response_params</span> <span class="o">=</span> <span class="n">token</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">chk_response</span> <span class="o">=</span> <span class="n">response</span>
+                    <span class="n">response_params</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_responses</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s1">&#39;no valid responses to check&#39;</span><span class="p">)</span>
+                <span class="n">valid_input</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">chk_response</span> <span class="ow">in</span> <span class="n">valid_responses</span><span class="p">:</span>
+                    <span class="n">valid_input</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">parms_ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">chk_response</span><span class="p">,</span> <span class="n">response_params</span>
+        
+        <span class="k">return</span> <span class="n">chk_response</span></div>
+
+
+<div class="viewcode-block" id="ConsoleInputHelper.wait_with_bypass">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleInputHelper.wait_with_bypass">[docs]</a>
+    <span class="k">def</span> <span class="nf">wait_with_bypass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">secs</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pause execution for specified number of seconds.</span>
+<span class="sd">        </span>
+<span class="sd">        User may press enter to resume prior to timeout seconds.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            secs: Number of seconds to wait.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">get_input_with_timeout</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="o">=</span><span class="n">secs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_input_with_timeout_win</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>  <span class="n">default</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">&quot;_input_with_timeout_win()&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">timer</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span>
+        <span class="n">endtime</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout_secs</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">timer</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">endtime</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">msvcrt</span><span class="o">.</span><span class="n">kbhit</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msvcrt</span><span class="o">.</span><span class="n">getwche</span><span class="p">())</span> <span class="c1">#XXX can it block on multibyte characters?</span>
+                <span class="n">endtime</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout_secs</span>  <span class="c1"># Reset timer each time a key is pressed.</span>
+                <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">:</span>   <span class="c1">#XXX check what Windows returns here</span>
+                    <span class="nb">print</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.04</span><span class="p">)</span> <span class="c1"># just to yield to other processes/threads</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">default</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;Time Expired.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_alarm_handler</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TimeoutError</span><span class="p">(</span><span class="s1">&#39;time expired.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_input_with_timeout_nix</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout_secs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># set signal handler for *nix systems</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">&quot;_input_with_timeout_nix()&quot;</span><span class="p">)</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGALRM</span><span class="p">,</span> <span class="n">ConsoleInputHelper</span><span class="o">.</span><span class="n">_alarm_handler</span><span class="p">)</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="n">timeout_secs</span><span class="p">)</span> <span class="c1"># produce SIGALRM in `timeout` seconds</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">alarm</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># cancel alarm</span>
+            <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------</span>
+<span class="c1"># Miscellaneous Routines</span>
+<span class="c1"># -------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="pad_r">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.pad_r">[docs]</a>
+<span class="k">def</span> <span class="nf">pad_r</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pad input text with pad character, return left justified string of specified length.</span>
+
+<span class="sd">    Example::</span>
+<span class="sd">    </span>
+<span class="sd">        text = pad_r(&#39;abc&#39;, 10, pad_char=&#39;X&#39;)</span>
+<span class="sd">        print(text) </span>
+<span class="sd">        &#39;abcXXXXXXXX&#39;</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        text: Input string to pad.</span>
+<span class="sd">        length: Length of resulting string.</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        pad_char: String padding character (default: {&#39; &#39;}).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Pad character MUST be of length 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Left justified padded string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pad_char</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Padding character should only be 1 character in length&#39;</span><span class="p">)</span>
+    
+    <span class="n">pad_len</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pad_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">text</span><span class="si">}{</span><span class="n">pad_char</span><span class="o">*</span><span class="n">pad_len</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">text</span>    </div>
+
+
+<div class="viewcode-block" id="pad_l">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.pad_l">[docs]</a>
+<span class="k">def</span> <span class="nf">pad_l</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pad input text with pad character, return right-justified string of specified length.</span>
+
+<span class="sd">        Example::</span>
+<span class="sd">    </span>
+<span class="sd">            text = pad_l(&#39;abc&#39;, 10, pad_char=&#39;X&#39;)</span>
+<span class="sd">            print(text) </span>
+<span class="sd">            &#39;XXXXXXXXabc&#39;</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        text: Input string to pad.</span>
+<span class="sd">        length: Length of resulting string.</span>
+
+<span class="sd">    Keyword Arguments:</span>
+<span class="sd">        pad_char: String padding character [default: {&#39; &#39;}].</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Pad character MUST be of length 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Right justified padded string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pad_char</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Padding character should only be 1 character in length&#39;</span><span class="p">)</span>
+    
+    <span class="n">pad_len</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pad_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pad_char</span><span class="o">*</span><span class="n">pad_len</span><span class="si">}{</span><span class="n">text</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">text</span>    </div>
+
+
+<div class="viewcode-block" id="disable_ctrl_c_handler">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.disable_ctrl_c_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">disable_ctrl_c_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Disable handler for Ctrl-C checking.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_DFL</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">success</span></div>
+
+
+<div class="viewcode-block" id="enable_ctrl_c_handler">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.enable_ctrl_c_handler">[docs]</a>
+<span class="k">def</span> <span class="nf">enable_ctrl_c_handler</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enable handler for Ctrl-C checking.</span>
+
+<span class="sd">    If Ctrl-C occurs, user is prompted to continue or exit.</span>
+<span class="sd">    </span>
+<span class="sd">    Prompt will timeout after 10 seconds and exit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">_interrupt_handler</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">success</span></div>
+
+
+<span class="k">def</span> <span class="nf">_interrupt_handler</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">ConsoleInputHelper</span><span class="p">()</span><span class="o">.</span><span class="n">get_input_with_timeout</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Ctrl-C, Continue or Exit (c,e)? &#39;</span><span class="p">,[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;E&#39;</span><span class="p">,</span><span class="s1">&#39;e&#39;</span><span class="p">],</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">ConsoleHelper</span><span class="p">()</span>
+    <span class="n">in_help</span> <span class="o">=</span> <span class="n">ConsoleInputHelper</span><span class="p">()</span>
+    <span class="n">enable_ctrl_c_handler</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">(</span><span class="n">cursor_home</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">console_size</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">set_viewport</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Console size: </span><span class="si">{</span><span class="n">console_size</span><span class="si">}</span><span class="s1">, cur pos: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print_line_seperator</span><span class="p">(</span><span class="s1">&#39;Test cursor attributes&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">STEADY_BLOCK</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">_CursorAttribute</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">cursor_attribute</span> <span class="o">=</span> <span class="n">attr</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CURSOR: </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">print_line_seperator</span><span class="p">(</span><span class="s1">&#39;Test cursor shape...&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">CursorShape</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CURSOR: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">eol</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">STEADY_BLOCK</span>            
+    <span class="n">console</span><span class="o">.</span><span class="n">display_status</span><span class="p">(</span><span class="s1">&#39;Test Rows...&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print_at</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Row </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Console size: </span><span class="si">{</span><span class="n">console_size</span><span class="si">}</span><span class="s1"> and current position: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Look at the beautiful </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CBLUE</span><span class="p">)</span><span class="si">}</span><span class="s1"> sky&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;After </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CBLUE</span><span class="p">)</span><span class="si">}</span><span class="s1"> sky&#39;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Check cursor positioning...&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print_at</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Should print at  location 10,5 xxxxxxx&quot;</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_left</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOL</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;EOL&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_BOL</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;BOL&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_BOS</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;BOS&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span> <span class="s2">&quot;Moved to 12,1&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOS</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;EOS&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Check scrolling...&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Row </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
+        <span class="k">if</span> <span class="n">row</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="s1">&#39;Scrolling...&#39;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">set_viewport</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOL</span><span class="p">()</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">_dump_color_palette</span><span class="p">()</span>
+
+    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">DEFAULT</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">in_help</span><span class="o">.</span><span class="n">get_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Pick a color &gt; &#39;</span><span class="p">,</span> 
+                                          <span class="n">valid_responses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">],</span> 
+                                          <span class="n">default</span><span class="o">=</span><span class="s1">&#39;Blue&#39;</span><span class="p">,</span> 
+                                          <span class="n">timeout_secs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;You selected: </span><span class="si">{</span><span class="n">resp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;That&#39;s all folks!&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, JavaWiz1@hotmail.com.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,34 +1,57 @@
 import time
 
 import dt_tools.console.console_helper as helper
-from dt_tools.console.console_helper import (ConsoleControl, ConsoleHelper,
-                                             ConsoleInputHelper, CursorShape,
-                                             CursorVisibility)
+from dt_tools.console.console_helper import (
+    ColorBG,
+    ColorFG,
+    ColorStyle,
+    ConsoleHelper,
+    ConsoleInputHelper,
+    CursorShape,
+    _CursorAttribute,
+)
 
 
 def console_helper_demo():
     console = ConsoleHelper()
     helper.enable_ctrl_c_handler()
 
+    wait_seconds = 2
+
     console.clear_screen(cursor_home=True)
     console_size = console.get_console_size()
     row, col = console.cursor_current_position()
     console.set_viewport(1,console_size[0]-1)
-    print(f'Console size: {console_size}, cur pos: {row},{col}')
-    console.print_line_seperator('Test cursor visibility', 40)
-    # print('Test cursor visibility...')
-    for setting in CursorVisibility:
-        console.cursor_visibility = setting
-        console.debug_display_cursor_location()
-        console.print_with_wait(f'CURSOR: {setting}', 2, eol=' ')
-        print()
-    console.clear_screen()
+    console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
+    console.cursor_save_position()
 
-    console.print_line_seperator('Test cursor shape...')
+    console.print_line_seperator('Test color attributes', 40)
+    color_code = ConsoleHelper().color_code(ColorStyle.ITALIC, ColorFG.RED, ColorBG.WHITEBG)
+    token = ConsoleHelper().cwrap('string', color_code)
+    print(f'This {token} is Red Italic on White BG')
+    time.sleep(wait_seconds/2)
+    print(f'This {ConsoleHelper().cwrap("string", ColorFG.GREEN)} is Green')
+    time.sleep(wait_seconds/2)
+    print(f'This {ConsoleHelper().cwrap("string", ColorFG.RED, None, ColorStyle.BOLD)} is Bold Red')
+    time.sleep(wait_seconds + 2)
+    
+    console.cursor_restore_position()
+    console.clear_to_EOS()
+
+    console.print_line_seperator('Test cursor attributes', 40)
+    for attr in _CursorAttribute:
+        console.cursor_attribute = attr
+        console.debug_display_cursor_location()
+        console.print_with_wait(f'CURSOR: {attr} ', wait_seconds, eol='')
+        print()
+    console.cursor_restore_position()
+    console.clear_to_EOS()
+
+    console.print_line_seperator('Test cursor shape...', 40)
     for shape in CursorShape:
         console.cursor_shape = shape
         console.debug_display_cursor_location()
-        console.print_with_wait(f'CURSOR: {shape}', 2, eol = ' ')
+        console.print_with_wait(f'CURSOR: {shape}', wait_seconds, eol = ' ')
         print()
     console.clear_screen()
 
@@ -37,87 +60,91 @@ def console_helper_demo():
     for row in range(1, console_size[0]+1):
         console.print_at(row, 60, f'Row {row}', eol='')
     console.cursor_move(row=1,column=1)
-    console.print_with_wait(f'Console size: {console_size} and current position: {row},{col}',3)
+    console.print_with_wait(f'Console size: {console_size} and current position: {row},{col}', wait_seconds)
     console.cursor_move(5,1)
-    print(f'Look at the beautiful {console.cwrap("blue",ConsoleControl.CBLUE)} sky')
-    console.debug_display_cursor_location(f'After {console.cwrap("blue",ConsoleControl.CBLUE)} sky')
-    time.sleep(3)
+    print(f'Look at the beautiful {console.cwrap("blue",ColorFG.BLUE)} sky')
+    console.debug_display_cursor_location(f'After {console.cwrap("blue",ColorFG.BLUE)} sky')
+    time.sleep(wait_seconds)
 
     print('Check cursor positioning...')
     console.print_at(10, 5, "Should print at  location 10,5 xxxxxxx", eol='')
     console.debug_display_cursor_location()
-    time.sleep(3)
+    time.sleep(wait_seconds)
     console.cursor_left(7)
 
     console.clear_to_EOL()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOL',ConsoleControl.CGREEN)}")
-    time.sleep(3)
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOL',ColorFG.GREEN)}")
+    time.sleep(wait_seconds)
 
     print('abc', end='')
     console.debug_display_cursor_location()
-    time.sleep(3)
+    time.sleep(wait_seconds)
 
     console.clear_to_BOL()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOL',ConsoleControl.CGREEN)}")
-    time.sleep(3)
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOL',ColorFG.GREEN)}")
+    time.sleep(wait_seconds)
 
     console.clear_to_BOS()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOS',ConsoleControl.CGREEN)}")
-    time.sleep(3)
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOS',ColorFG.GREEN)}")
+    time.sleep(wait_seconds)
 
     console.cursor_move(12,1)
     console.debug_display_cursor_location( "Moved to 12,1")
-    time.sleep(3)
+    time.sleep(wait_seconds)
 
     console.clear_to_EOS()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOS',ConsoleControl.CGREEN)}")
-    time.sleep(3)
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOS',ColorFG.GREEN)}")
+    time.sleep(wait_seconds)
+
+    console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
+    console.set_viewport(2,console_size[0]-1)
 
     console.clear_screen()
-    print('Check scrolling...')
+    console.print_line_seperator('Check scrolling...', 40)
     for row in range(1, 50):
         print(f'Row {row}')    
         if row % 5 == 0:
             console.debug_display_cursor_location('Scrolling...')
             time.sleep(.5)
+    time.sleep(wait_seconds)
 
     console.set_viewport()
-    console.cursor_move(console_size[0],1)
-    console.clear_to_EOL()
-
-    console.cursor_move(0,0)
-    console._dump_color_palette()
+    console.clear_screen()
+    console.print_line_seperator('Display color palette, codes are [style,fg,bg]...', 40)
+    time.sleep(wait_seconds)
+    console._display_color_palette()
 
     console.cursor_shape = CursorShape.DEFAULT
-    print("End of ConsoleHelper demo.")
+    print(f"End of {console.cwrap('ConsoleHelper', ColorFG.YELLOW)} demo.")
 
-def console_input_helper_demo():
+def console_input_helper_demo():    
     console = ConsoleHelper()
     console_input = ConsoleInputHelper()
-
-    test_name = console.cwrap('Input with Timeout', ConsoleControl.CYELLOW)    
+    print()
+    test_name = console.cwrap('Input with Timeout', ColorFG.CITALIC)    
     print(f'{test_name}: default response is y, timeout 3 secs...')
     resp = console_input.get_input_with_timeout('Test prompt (y/n) > ', console_input.YES_NO_RESPONSE, default='y', timeout_secs=3)
     print(f'  returns: {resp}')
-    test_name = console.cwrap('Wait with Timeout', ConsoleControl.CYELLOW)
+    test_name = console.cwrap('Wait with Timeout', ColorFG.CITALIC)
     print(f'\n{test_name}: Wait 5 seconds, or press enter to abort wait')
     console_input.wait_with_bypass(5)
-
-    print("End of ConsoleInputHelper demo.")
+    
+    print(f"End of {console.cwrap('ConsoleInputHelper', ColorFG.YELLOW)} demo.")
 
 def message_box_demo():
-    import dt_tools.console.msgbox as msgbox
     import tkinter as tk
+
+    import dt_tools.console.msgbox as msgbox
 
     console = ConsoleHelper()
 
     print('Alert box (no timeout)')
     resp = msgbox.alert('This is an alert box', 'ALERT no timeout')
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
 
     print('Alert box (with timeout, 3 sec)')
     resp = msgbox.alert('This is an alert box', 'ALERT w/Timeout', timeout=3000)
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
 
     txt = ''
     for k,v in tk.__dict__.items():
@@ -125,62 +152,65 @@ def message_box_demo():
             txt += f'{k:20} {v}\n'
     
     print('Alert box (multi-line)')
-    msgbox.used_font_family = msgbox.MONOSPACE_FONT_FAMILY
-    msgbox.used_font_size = msgbox.MONOSPACE_FONT_SIZE    
+    msgbox._used_font_family = msgbox.MONOSPACE_FONT_FAMILY
+    msgbox._used_font_size = msgbox.MONOSPACE_FONT_SIZE    
     resp = msgbox.alert(txt,"ALERT-MULTILINE (no timeout)")
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
-    msgbox.used_font_family = msgbox.PROPORTIONAL_FONT_FAMILY
-    msgbox.used_font_size = msgbox.PROPORTIONAL_FONT_SIZE
+    msgbox._used_font_family = msgbox.PROPORTIONAL_FONT_FAMILY
+    msgbox._used_font_size = msgbox.PROPORTIONAL_FONT_SIZE
     print('Confirmation box (no timeout)')    
     resp = msgbox.confirm('this is a confirm box, no timeout', "CONFIRM")
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
     print('Confirmation box (3 sec timeout)')    
     resp = msgbox.confirm('this is a confirm box, 3 sec timeout', "CONFIRM", timeout=3000)
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
     print('Prompt box (no timeout)')    
     resp = msgbox.prompt('This is a prompt box', 'PROMPT', 'default')
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
     print('Prompt box (3 sec timeout)')    
     resp = msgbox.prompt('This is a prompt box', 'PROMPT (3 sec timeout)', 'default', timeout=3000)
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
     print('Password box (no timeout)')    
     resp = msgbox.password('This is a password box', 'PASSWORD', 'SuperSecretPassword')
-    print(f'  returns: {console.cwrap(resp, ConsoleControl.CGREEN)}')
+    print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
 
-    print("End of MsgBox demo.")
+    print(f"End of {console.cwrap('MessageBox', ColorFG.YELLOW)} demo.")
 
 
 def progress_bar_demo():
     from dt_tools.console.progress_bar import ProgressBar
     
+    sleep_time = .15
     print('Progress bar...')
     pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=False)
     for incr in range(1,51):
         pbar.display_progress(incr, f'incr [{incr}]')
-        time.sleep(.15)    
+        time.sleep(sleep_time)    
 
     print('\nProgress bar with elapsed time...')
     pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=True)
     for incr in range(1,51):
         pbar.display_progress(incr, f'incr [{incr}]')
-        time.sleep(.15)
-    print("End of ProgressBar demo.")
+        time.sleep(sleep_time)
+    print(f"End of {console.cwrap('ProgressBar', ColorFG.YELLOW)} demo.")
 
 
 def spinner_demo():
     from dt_tools.console.spinner import Spinner, SpinnerType
+
+    sleep_time = .25
     for spinner_type in SpinnerType:
         spinner = Spinner(caption=spinner_type, spinner=spinner_type, show_elapsed=True)
         spinner.start_spinner()
         for cnt in range(1,20):
-            time.sleep(.25)
+            time.sleep(sleep_time)
         spinner.stop_spinner()
-    print("End of Spinner demo.")
+    print(f"End of {console.cwrap('Spinner',ColorFG.YELLOW)} demo.")
 
 
 if __name__ == '__main__':
@@ -194,8 +224,9 @@ if __name__ == '__main__':
 
     console = ConsoleHelper()
     console_input = ConsoleInputHelper()
+    console.clear_screen()
     for name, demo_func in DEMOS.items():
-        demo_name = console.cwrap(name, ConsoleControl.CYELLOW)
+        demo_name = console.cwrap(name, ColorFG.YELLOW)
         resp = console_input.get_input_with_timeout(f'Demo {demo_name} Functions (y/n) > ', 
                                                 console_input.YES_NO_RESPONSE, default='n', 
                                                 timeout_secs=10).lower()

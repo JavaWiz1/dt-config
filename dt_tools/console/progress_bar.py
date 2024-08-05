@@ -1,3 +1,21 @@
+"""
+Progress bar to provide visual feedback of process activity.
+
+Features:
+    - Customized display.
+    - Optionally display elapsed time.
+    - Progress bar reflects percent completion of process.
+
+Example::
+    from dt_tools.console.progress_bar import ProgressBar
+
+    p_bar = ProgressBar("Sample Execution", bar_line=40, max_increments=100)
+    for i in range(99):
+        p_bar.display_progress(i+1)
+        do something....
+    p_bar.cancel_progress()
+"""
+
 import os
 import time
 from datetime import datetime as dt
@@ -9,41 +27,36 @@ from dt_tools.console.console_helper import ConsoleHelper
 
 class ProgressBar():
     """
-    Displays progress bar in the console.  To update progress, call display_progress(inc) method to indicate
-    current increment count.  When inc varible reaches max_increments value, progress bar will terminate.
-
-    Parameters:
-        :filename: caption         : Prefix text to display
-        :filename: bar_len         : length of bar in characters
-        :filename: max_increments  : max number of increments in the bar
-        :filename: fill            : character to use to display bar fill
-        :filename: str_end         : line end (CR returns to beg of current line-default)
-        :filename: show_elapsed    : display elapsed time to right of progress bar
-
-    Example:
-
-    .. code-block:: python
-        p_bar = ProgressBar("Sample Execution", bar_line=40, max_increments=100)
-        for i in range(99):
-            p_bar.display_progress(i+1)
-            do something....
-    
+    Displays progress bar in the console.  
     """
-    def __init__(self, caption: str, bar_length: int, max_increments: int, fill= '█', str_end = "\r", show_elapsed: bool = False):
-        """_summary_
 
-        :param caption: _description_
-        :type caption: str
-        :param bar_length: _description_
-        :type bar_length: int
-        :param max_increments: _description_
-        :type max_increments: int
-        :param fill: _description_, defaults to '█'
-        :type fill: str, optional
-        :param str_end: _description_, defaults to "\r"
-        :type str_end: str, optional
-        :param show_elapsed: _description_, defaults to False
-        :type show_elapsed: bool, optional
+    def __init__(self, caption: str, bar_length: int, max_increments: int, fill= '█', str_end = "\r", show_elapsed: bool = False):
+        """
+        Progress bar class instantiation
+
+        Arguments:
+            caption -- Caption text
+            bar_length -- Length of progress bar, must be < console width
+            max_increments -- Maximum number of progress segments
+
+        Keyword Arguments:
+            fill -- Progress fill character (default: {'█'})
+            str_end -- End of progress bar string. default is progress remains fixed location (default: {"\r"})
+            show_elapsed -- Append elapsed time at end of progress bar (default: {False})
+
+        Note:
+            To update progress, call display_progress(inc) method to indicate current increment count.  
+            When inc varible reaches max_increments value, progress bar will terminate.
+
+        Example::
+            from dt_tools.console.progress_bar import ProgressBar
+            
+            p_bar = ProgressBar("Sample Execution", bar_line=40, max_increments=100)
+            for i in range(99):
+                p_bar.display_progress(i+1)
+                do something....
+            p_bar.cancel_progress()
+
         """
         self._caption = caption
         self._max_increments = max_increments
@@ -62,7 +75,7 @@ class ProgressBar():
 
     def display_progress(self, current_increment: int, suffix: str = ''):
         """
-        Update the progress bar filling up to current increment
+        Update the progress bar filling up to current increment.
         
         Parameters:
             current_increment: integer indication progress up to max_increments
@@ -73,7 +86,7 @@ class ProgressBar():
             self._started = True
         if current_increment > self._max_increments:
             current_increment = self._max_increments
-        
+
         self.console.cursor_off()
         self._finished = False
 
@@ -91,7 +104,7 @@ class ProgressBar():
             self.cancel_progress()
 
     def cancel_progress(self):
-        """Turn off progress bar"""
+        """Turn off progress bar."""
         self._finshed = True
         self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
         self.console.cursor_on()
@@ -100,7 +113,7 @@ class ProgressBar():
 
     @property
     def elapsed_time(self) -> str:
-        """Return elapsed time in format hh:mm:ss"""
+        """Return elapsed time in format hh:mm:ss."""
         return self._elapsed_time
     
     def _calculate_elapsed_time(self, end_time: float, start_time: float) -> str:
