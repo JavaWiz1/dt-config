@@ -14,6 +14,8 @@ from dt_tools.console.console_helper import (
 
 def console_helper_demo():
     console = ConsoleHelper()
+    cih = ConsoleInputHelper()
+
     helper.enable_ctrl_c_handler()
 
     wait_seconds = 2
@@ -29,11 +31,11 @@ def console_helper_demo():
     color_code = ConsoleHelper().color_code(ColorStyle.ITALIC, ColorFG.RED, ColorBG.WHITEBG)
     token = ConsoleHelper().cwrap('string', color_code)
     print(f'This {token} is Red Italic on White BG')
-    time.sleep(wait_seconds/2)
     print(f'This {ConsoleHelper().cwrap("string", ColorFG.GREEN)} is Green')
-    time.sleep(wait_seconds/2)
-    print(f'This {ConsoleHelper().cwrap("string", ColorFG.RED, None, ColorStyle.BOLD)} is Bold Red')
-    time.sleep(wait_seconds + 2)
+    print(f'This {ConsoleHelper().cwrap("string", ColorFG.RED)} is Red')
+    print(f'This {ConsoleHelper().cwrap("string", ColorFG.RED, None, ColorStyle.ITALIC)} is Italic Red')
+    print(f'This {ConsoleHelper().cwrap("string", ColorFG.RED, None, ColorStyle.BOLD)} is Bold Red\n')
+    cih.get_input_with_timeout('Press ENTER to continue', timeout_secs=10)
     
     console.cursor_restore_position()
     console.clear_to_EOS()
@@ -44,6 +46,8 @@ def console_helper_demo():
         console.debug_display_cursor_location()
         console.print_with_wait(f'CURSOR: {attr} ', wait_seconds, eol='')
         print()
+    print()
+    cih.get_input_with_timeout('Press ENTER to continue', timeout_secs=10)
     console.cursor_restore_position()
     console.clear_to_EOS()
 
@@ -53,6 +57,7 @@ def console_helper_demo():
         console.debug_display_cursor_location()
         console.print_with_wait(f'CURSOR: {shape}', wait_seconds, eol = ' ')
         print()
+    cih.get_input_with_timeout('Press ENTER to continue', timeout_secs=10)
     console.clear_screen()
 
     console.cursor_shape = CursorShape.STEADY_BLOCK            
@@ -106,7 +111,7 @@ def console_helper_demo():
         if row % 5 == 0:
             console.debug_display_cursor_location('Scrolling...')
             time.sleep(.5)
-    time.sleep(wait_seconds)
+    cih.get_input_with_timeout('Press ENTER to continue', timeout_secs=10)
 
     console.set_viewport()
     console.clear_screen()
@@ -121,11 +126,11 @@ def console_input_helper_demo():
     console = ConsoleHelper()
     console_input = ConsoleInputHelper()
     print()
-    test_name = console.cwrap('Input with Timeout', ColorFG.CITALIC)    
+    test_name = console.cwrap('Input with Timeout', ColorStyle.ITALIC)    
     print(f'{test_name}: default response is y, timeout 3 secs...')
     resp = console_input.get_input_with_timeout('Test prompt (y/n) > ', console_input.YES_NO_RESPONSE, default='y', timeout_secs=3)
     print(f'  returns: {resp}')
-    test_name = console.cwrap('Wait with Timeout', ColorFG.CITALIC)
+    test_name = console.cwrap('Wait with Timeout', ColorStyle.ITALIC)
     print(f'\n{test_name}: Wait 5 seconds, or press enter to abort wait')
     console_input.wait_with_bypass(5)
     
@@ -152,13 +157,13 @@ def message_box_demo():
             txt += f'{k:20} {v}\n'
     
     print('Alert box (multi-line)')
-    msgbox._used_font_family = msgbox.MONOSPACE_FONT_FAMILY
-    msgbox._used_font_size = msgbox.MONOSPACE_FONT_SIZE    
+    msgbox._used_font_family = msgbox.MB_FontFamily.MONOSPACE
+    msgbox._used_font_size = msgbox.MB_FontSize.MONOSPACE
     resp = msgbox.alert(txt,"ALERT-MULTILINE (no timeout)")
     print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
-    msgbox._used_font_family = msgbox.PROPORTIONAL_FONT_FAMILY
-    msgbox._used_font_size = msgbox.PROPORTIONAL_FONT_SIZE
+    msgbox._used_font_family = msgbox.MB_FontFamily.PROPORTIONAL
+    msgbox._used_font_size = msgbox.MB_FontSize.PROPORTIONAL
     print('Confirmation box (no timeout)')    
     resp = msgbox.confirm('this is a confirm box, no timeout', "CONFIRM")
     print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')

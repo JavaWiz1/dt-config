@@ -511,7 +511,7 @@ class ConsoleHelper():
             Updated string.
         """
         
-        color_code = cls.color_code(color, colorBG, style) if isinstance(color, ColorFG) else color
+        color_code = color if isinstance(color, ColorFG) else cls.color_code(color, colorBG, style)
 
         return f'{color_code}{text}{_ConsoleControl.CEND}'
 

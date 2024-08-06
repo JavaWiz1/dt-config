@@ -1,7 +1,7 @@
 [tool.poetry]
 package-mode = true 
 name = "dt-console"
-version = "0.1.0"
+version = "0.1.1"
 description = "Console helper tools for CLIs"
 authors = ["Al DAmico <JavaWiz1@hotmail.com>"]
 readme = "README.md"
@@ -21,7 +21,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-loguru = "^0.7"
+dt-misc = "*"
 
 [[tool.poetry.source]]
 name = "PyPI"
@@ -32,10 +32,8 @@ name = "piwheels"
 url = "https://www.piwheels.org/simple"
 priority = "supplemental"
 
-
 [tool.poetry.group.dev.dependencies]
-sphinx = "*"
-sphinx-rtd-theme = "^2.0.0"
+sphinx-rtd-theme = "^2"
 
 [build-system]
 requires = ["poetry-core"]
