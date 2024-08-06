@@ -41,21 +41,33 @@ poetry install --without dev
 ### use the package manager [pip](https://pip.pypa.io/en/stable/) to install dt-console.
 
 ```bash
-pip install dt-console
+pip install dt-console [--user]
 ```
 
 ## Usage
+A demo cli has been included to show how these modules can be used.  The demo selectively displays each control (console tools, input prompt, messagebox, ProgressBar and Spinner) and source is provided to review for implementation details.
 
-See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/develop/dt_tools/cli/console_examples.py) for detailed demo examples (runnable demo)
+See [dt_tools.cli.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/develop/dt_tools/cli/console_examples.py) for detailed demo examples (runnable demo)
 
-Developer package documentation can be found [here](https://github.com/JavaWiz1/dt-config/blob/develop/docs/html/index.html).
+To run the demo type:
+```bash
+python -m dt_tools.cli.console_examples
+
+# or if via source (and poetry)
+poetry run python -m dt_tools.cli.console_examples
+```
+
+Developer package documentation contains details on all classes and supporting code (i.e. constant namespaces and enums) use for method calls.  Docs can be found [here](https://htmlpreview.github.io/?https://github.com/JavaWiz1/dt-config/blob/develop/docs/html/index.html).
 
 
-### ConsoleHelper
+### Main classes/modules Overview
+
+#### ConsoleHelper
 ConsoleHelper provides methods for managing the console windows.  
 
 ```python
     from dt_tools.console.console_helper import ConsoleHelper
+    import time
 
     console.clear_screen(cursor_home=True)
  
@@ -78,7 +90,7 @@ ConsoleHelper provides methods for managing the console windows.
     console.print_at(row,col,'Finished')
 ```
 
-### ConsoleInputHelper
+#### ConsoleInputHelper
 ConsoleInputHelper provides a customizable input prompt.
 
 ```python
@@ -94,7 +106,7 @@ ConsoleInputHelper provides a customizable input prompt.
 
 ```
 
-### MessageBox
+#### MessageBox
 Message box implements Alert, Confirmation, Input Prompt, Password Prompt message boxes.  
 
 ```python
@@ -108,7 +120,7 @@ Message box implements Alert, Confirmation, Input Prompt, Password Prompt messag
 
 ```
 
-### ProgressBar
+#### ProgressBar
 ProgressBar is an easy to use, customizable console ProgressBar which displays percentage complete and elapsed time.
 
 ```python
@@ -128,7 +140,7 @@ ProgressBar is an easy to use, customizable console ProgressBar which displays p
         time.sleep(.15)
 ```
 
-### Spinner
+#### Spinner
 Spinner is an easy to use, customizable console Spinner control which displays spinning icon and elapsed time.
 
 ```python
