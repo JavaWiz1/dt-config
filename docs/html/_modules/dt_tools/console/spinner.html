@@ -71,7 +71,24 @@
            <div itemprop="articleBody">
              
   <h1>Source code for dt_tools.console.spinner</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Spinner control to provide visual feedback of process activity.</span>
+
+<span class="sd">Features:</span>
+<span class="sd">   - Customizable display.    </span>
+<span class="sd">   - Optionally, display elapsed time.</span>
+<span class="sd">   - Selectable spinner icons.</span>
+
+<span class="sd">Example::</span>
+<span class="sd">    from dt_tools.console.spinner import Spinner, SpinnerType</span>
+
+<span class="sd">    spinner = Spinner(&quot;In progress&quot;, SpinnerType.DOTS, True)</span>
+<span class="sd">    spinner.start_spinner()</span>
+<span class="sd">    # Do some work....</span>
+<span class="sd">    spinner.stop_spinner()</span>
+<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
@@ -110,7 +127,9 @@
 <span class="sd">    </span>
 <span class="sd">    Example::</span>
 <span class="sd">    </span>
-<span class="sd">        spinner = Spinner(&quot;In progress&quot;, Spinner.DOTS, True)</span>
+<span class="sd">        from dt_tools.console.spinner import Spinner, SpinnerType</span>
+
+<span class="sd">        spinner = Spinner(&quot;In progress&quot;, SpinnerType.DOTS, True)</span>
 <span class="sd">        spinner.start_spinner()</span>
 <span class="sd">        # Do some work....</span>
 <span class="sd">        spinner.stop_spinner()</span>

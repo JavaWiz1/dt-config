@@ -1,6 +1,6 @@
 # dt-console
 
-dt-console is a Python library to simplify CLI output for your python apps/scripts.  It has been tested in Windows and Linux.
+dt-console is a Python library to simplify CLI input and output for your python apps/scripts.  It has been tested in Windows and Linux.
 
 Features include:
 <ul>
@@ -9,22 +9,36 @@ Features include:
         <li>Set console window title</li>
         <li>Show/Hide console window, set fg/bg colors</li>
         <li>Set cursor style, location, ...</li>
-        <li>Position cursor </li>
+        <li>Routines to print and colorize output text</li>
     </ul>
-    <li><b>ConsoleInputHelper</b> - Handle keyboard input prompts</li>
+    <li><b>ConsoleInputHelper</b> - Keyboard input prompts with validation and timeouts.</li>
     <li><b>MessageBox</b> - GUI messsagebox (alert, confirm, input, password)</li>
     <li><b>ProgressBar</b> - Display visual progress on screen via configurable progress bar</li>
     <li><b>Spinner</b> - Display visual progress on screen via configuable spinner control</li>
 </ul>
 
+
 ## Installation
 
-Download source code from githup via git
+### Download source code from githup via git
 ```bash
-git clone https://github.com/JavaWiz1/dt-console.git
+git clone https://github.com/JavaWiz1/dt-config.git
+```
+Note, when downloading source, [Poetry](https://python-poetry.org/docs/) was used as the package manager.  Poetry 
+handles creating the virtual environment and all dependent packages installs with proper versions.
+
+To setup virtual environment with required production __AND__ dev ([sphinx](https://www.sphinx-doc.org/en/master/)) dependencies:
+```bash
+poetry install
 ```
 
-or use the package manager [pip](https://pip.pypa.io/en/stable/) to install dt-console.
+with ONLY production packages (no sphinx):
+```bash
+poetry install --without dev
+```
+
+
+### use the package manager [pip](https://pip.pypa.io/en/stable/) to install dt-console.
 
 ```bash
 pip install dt-console
@@ -32,11 +46,14 @@ pip install dt-console
 
 ## Usage
 
-See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/develop/dt_tools/console_examples.py) for detailed demo examples (runnable demo)
+See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/develop/dt_tools/cli/console_examples.py) for detailed demo examples (runnable demo)
 
+Developer package documentation can be found [here](https://github.com/JavaWiz1/dt-config/blob/develop/docs/html/index.html).
 
 
 ### ConsoleHelper
+ConsoleHelper provides methods for managing the console windows.  
+
 ```python
     from dt_tools.console.console_helper import ConsoleHelper
 
@@ -60,8 +77,10 @@ See [dt_tools.console_examples.py](https://github.com/JavaWiz1/dt-config/blob/de
     time.sleep(2)
     console.print_at(row,col,'Finished')
 ```
-ConsoleHelper provides methods for managing the console windows.  
+
 ### ConsoleInputHelper
+ConsoleInputHelper provides a customizable input prompt.
+
 ```python
     from dt_tools.console.console_helper import ConsoleInputHelper
 
@@ -76,6 +95,8 @@ ConsoleHelper provides methods for managing the console windows.
 ```
 
 ### MessageBox
+Message box implements Alert, Confirmation, Input Prompt, Password Prompt message boxes.  
+
 ```python
     import dt_tools.console.msgbox as msgbox
 
@@ -88,6 +109,8 @@ ConsoleHelper provides methods for managing the console windows.
 ```
 
 ### ProgressBar
+ProgressBar is an easy to use, customizable console ProgressBar which displays percentage complete and elapsed time.
+
 ```python
     from dt_tools.console.progress_bar import ProgressBar
     import time
@@ -106,6 +129,8 @@ ConsoleHelper provides methods for managing the console windows.
 ```
 
 ### Spinner
+Spinner is an easy to use, customizable console Spinner control which displays spinning icon and elapsed time.
+
 ```python
     from dt_tools.console.spinner import Spinner, SpinnerType
     import time

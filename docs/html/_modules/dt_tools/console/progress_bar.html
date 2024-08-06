@@ -71,7 +71,27 @@
            <div itemprop="articleBody">
              
   <h1>Source code for dt_tools.console.progress_bar</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Progress bar to provide visual feedback of process activity.</span>
+
+<span class="sd">Features:</span>
+<span class="sd">    - Customized display.</span>
+<span class="sd">    - Optionally display elapsed time.</span>
+<span class="sd">    - Progress bar reflects percent completion of process.</span>
+
+<span class="sd">Example::</span>
+
+<span class="sd">    from dt_tools.console.progress_bar import ProgressBar</span>
+
+<span class="sd">    p_bar = ProgressBar(&quot;Sample Execution&quot;, bar_line=40, max_increments=100)</span>
+<span class="sd">    for i in range(99):</span>
+<span class="sd">        p_bar.display_progress(i+1)</span>
+<span class="sd">        do something....</span>
+<span class="sd">    p_bar.cancel_progress()</span>
+<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 
@@ -105,12 +125,14 @@
 <span class="sd">            To update progress, call display_progress(inc) method to indicate current increment count.  </span>
 <span class="sd">            When inc varible reaches max_increments value, progress bar will terminate.</span>
 
-<span class="sd">        Example:</span>
-<span class="sd">            # .. code-block:: python</span>
+<span class="sd">        Example::</span>
+<span class="sd">            from dt_tools.console.progress_bar import ProgressBar</span>
+<span class="sd">            </span>
 <span class="sd">            p_bar = ProgressBar(&quot;Sample Execution&quot;, bar_line=40, max_increments=100)</span>
 <span class="sd">            for i in range(99):</span>
 <span class="sd">                p_bar.display_progress(i+1)</span>
 <span class="sd">                do something....</span>
+<span class="sd">            p_bar.cancel_progress()</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_caption</span> <span class="o">=</span> <span class="n">caption</span>

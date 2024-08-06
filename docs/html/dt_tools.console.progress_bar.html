@@ -88,6 +88,25 @@
              
   <section id="module-dt_tools.console.progress_bar">
 <span id="dt-tools-console-progress-bar-module"></span><h1>dt_tools.console.progress_bar module<a class="headerlink" href="#module-dt_tools.console.progress_bar" title="Link to this heading"></a></h1>
+<p>Progress bar to provide visual feedback of process activity.</p>
+<dl class="simple">
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Customized display.</p></li>
+<li><p>Optionally display elapsed time.</p></li>
+<li><p>Progress bar reflects percent completion of process.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dt_tools.console.progress_bar</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+
+<span class="n">p_bar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="s2">&quot;Sample Execution&quot;</span><span class="p">,</span> <span class="n">bar_line</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">max_increments</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">99</span><span class="p">):</span>
+    <span class="n">p_bar</span><span class="o">.</span><span class="n">display_progress</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">do</span> <span class="n">something</span><span class="o">....</span>
+<span class="n">p_bar</span><span class="o">.</span><span class="n">cancel_progress</span><span class="p">()</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="dt_tools.console.progress_bar.ProgressBar">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.progress_bar.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bar_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_increments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'█'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_elapsed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/progress_bar.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.progress_bar.ProgressBar" title="Link to this definition"></a></dt>

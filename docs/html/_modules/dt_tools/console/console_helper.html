@@ -89,7 +89,7 @@
 
 <span class="sd">Additionally, helper classes/namespaces provided:</span>
 
-<span class="sd">- **ConsoleColor**: Color codes for ansi output (see cwrap() function).</span>
+<span class="sd">- **ConsoleColor**: Color codes for ansi output (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).</span>
 <span class="sd">- **CursorShape**: Ansi codes for controlling cursor shape.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -117,52 +117,61 @@
     <span class="n">BELL</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\a</span><span class="s1">&#39;</span>
     <span class="n">CEND</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m&#39;</span>
 
-<div class="viewcode-block" id="ConsoleColors">
-<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleColors">[docs]</a>
-<span class="k">class</span> <span class="nc">ConsoleColors</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Console Colors to be used with cwrap().&quot;&quot;&quot;</span>
-    <span class="n">CBOLD</span><span class="p">:</span> <span class="n">Final</span>     <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
-    <span class="n">CITALIC</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3m&#39;</span>
-    <span class="n">CURL</span><span class="p">:</span> <span class="n">Final</span>      <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4m&#39;</span>
-    <span class="n">CBLINK</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[5m&#39;</span>
-    <span class="n">CBLINK2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[6m&#39;</span>
-    <span class="n">CSELECTED</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[7m&#39;</span>
+<div class="viewcode-block" id="ColorStyle">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorStyle">[docs]</a>
+<span class="k">class</span> <span class="nc">ColorStyle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Console Cursor styles&quot;&quot;&quot;</span>
+    <span class="n">BOLD</span><span class="p">:</span> <span class="n">Final</span>     <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
+    <span class="n">ITALIC</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3m&#39;</span>
+    <span class="n">URL</span><span class="p">:</span> <span class="n">Final</span>      <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4m&#39;</span>
+    <span class="n">BLINK</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[5m&#39;</span>
+    <span class="n">BLINK2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[6m&#39;</span>
+    <span class="n">SELECTED</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[7m&#39;</span></div>
 
-    <span class="n">CBLACK</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[30m&#39;</span>
-    <span class="n">CRED</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[31m&#39;</span>
-    <span class="n">CGREEN</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[32m&#39;</span>
-    <span class="n">CYELLOW</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[33m&#39;</span>
-    <span class="n">CBLUE</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[34m&#39;</span>
-    <span class="n">CVIOLET</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[35m&#39;</span>
-    <span class="n">CBEIGE</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[36m&#39;</span>
-    <span class="n">CWHITE</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[37m&#39;</span>
 
-    <span class="n">CBLACKBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[40m&#39;</span>
-    <span class="n">CREDBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[41m&#39;</span>
-    <span class="n">CGREENBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[42m&#39;</span>
-    <span class="n">CYELLOWBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[43m&#39;</span>
-    <span class="n">CBLUEBG</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[44m&#39;</span>
-    <span class="n">CVIOLETBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[45m&#39;</span>
-    <span class="n">CBEIGEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[46m&#39;</span>
-    <span class="n">CWHITEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[47m&#39;</span>
+<div class="viewcode-block" id="ColorFG">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorFG">[docs]</a>
+<span class="k">class</span> <span class="nc">ColorFG</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Console Colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`.&quot;&quot;&quot;</span>
+    <span class="n">BLACK</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[30m&#39;</span>
+    <span class="n">RED</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[31m&#39;</span>
+    <span class="n">GREEN</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[32m&#39;</span>
+    <span class="n">YELLOW</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[33m&#39;</span>
+    <span class="n">BLUE</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[34m&#39;</span>
+    <span class="n">VIOLET</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[35m&#39;</span>
+    <span class="n">BEIGE</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[36m&#39;</span>
+    <span class="n">WHITE</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[37m&#39;</span>
 
-    <span class="n">CGREY</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[90m&#39;</span>
-    <span class="n">CRED2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[91m&#39;</span>
-    <span class="n">CGREEN2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[92m&#39;</span>
-    <span class="n">CYELLOW2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[93m&#39;</span>
-    <span class="n">CBLUE2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[94m&#39;</span>
-    <span class="n">CVIOLET2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[95m&#39;</span>
-    <span class="n">CBEIGE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[96m&#39;</span>
-    <span class="n">CWHITE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[97m&#39;</span>
+    <span class="n">GREY</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[90m&#39;</span>
+    <span class="n">RED2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[91m&#39;</span>
+    <span class="n">GREEN2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[92m&#39;</span>
+    <span class="n">YELLOW2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[93m&#39;</span>
+    <span class="n">BLUE2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[94m&#39;</span>
+    <span class="n">VIOLET2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[95m&#39;</span>
+    <span class="n">BEIGE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[96m&#39;</span>
+    <span class="n">WHITE2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[97m&#39;</span></div>
 
-    <span class="n">CGREYBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[100m&#39;</span>
-    <span class="n">CREDBG2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[101m&#39;</span>
-    <span class="n">CGREENBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[102m&#39;</span>
-    <span class="n">CYELLOWBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[103m&#39;</span>
-    <span class="n">CBLUEBG2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[104m&#39;</span>
-    <span class="n">CVIOLETBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[105m&#39;</span>
-    <span class="n">CBEIGEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[106m&#39;</span>
-    <span class="n">CWHITEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[107m&#39;</span></div>
+
+<div class="viewcode-block" id="ColorBG">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorBG">[docs]</a>
+<span class="k">class</span> <span class="nc">ColorBG</span><span class="p">:</span>
+    <span class="n">BLACKBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[40m&#39;</span>
+    <span class="n">REDBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[41m&#39;</span>
+    <span class="n">GREENBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[42m&#39;</span>
+    <span class="n">YELLOWBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[43m&#39;</span>
+    <span class="n">BLUEBG</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[44m&#39;</span>
+    <span class="n">VIOLETBG</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[45m&#39;</span>
+    <span class="n">BEIGEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[46m&#39;</span>
+    <span class="n">WHITEBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[47m&#39;</span>
+
+    <span class="n">GREYBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[100m&#39;</span>
+    <span class="n">REDBG2</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[101m&#39;</span>
+    <span class="n">GREENBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[102m&#39;</span>
+    <span class="n">YELLOWBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[103m&#39;</span>
+    <span class="n">BLUEBG2</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[104m&#39;</span>
+    <span class="n">VIOLETBG2</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[105m&#39;</span>
+    <span class="n">BEIGEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[106m&#39;</span>
+    <span class="n">WHITEBG2</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[107m&#39;</span></div>
 
 
 <div class="viewcode-block" id="CursorShape">
@@ -237,13 +246,14 @@
 <span class="sd">        - Cursor control (up, down, left, right, move to location,...).</span>
 
 <span class="sd">    Example::</span>
+<span class="sd">        from dt_tools.console.console_helper import ConsoleHelper, ConsoleColors</span>
 
 <span class="sd">        con = ConsoleHelper()</span>
 <span class="sd">        con.clear_screen(cursor_home=True)</span>
 
 <span class="sd">        console_size = con.get_console_size()</span>
 <span class="sd">        row, col = con.cursor_current_position()</span>
-<span class="sd">        print_at(5,5, f&#39;Console size: {console_size}, cur pos: {row},{col}&#39;, eol=&#39;\\n&#39;)</span>
+<span class="sd">        con.print_at(5,5, f&#39;Console size: {console_size}, cur pos: {row},{col}&#39;, eol=&#39;\\n&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        token = f&#39;Test {con.cwrap(&quot;Yellow&quot;, ConsoleColors.CYELLOW)} string&#39;)</span>
 <span class="sd">        con.print_at(5, 10, token)</span>
@@ -426,7 +436,7 @@
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cursor_move">[docs]</a>
     <span class="k">def</span> <span class="nf">cursor_move</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Move cursor to specific location on console.</span>
+<span class="sd">        Move cursor to spefic location on console.</span>
 
 <span class="sd">        If row or column is not set, current position (row or column) will be used.</span>
 
@@ -664,34 +674,61 @@
 
 <div class="viewcode-block" id="ConsoleHelper.cwrap">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cwrap">[docs]</a>
-    <span class="k">def</span> <span class="nf">cwrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">cwrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ColorFG</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">colorBG</span><span class="p">:</span> <span class="n">ColorBG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">ColorStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Wrap text with color codes for display.</span>
-
-<span class="sd">        See ConsoleColors for available colors and control codes.</span>
+<span class="sd">        Wrap text with color codes for console display.</span>
+<span class="sd">        </span>
+<span class="sd">        See ConsoleFG, ConsoleBG and ConsoleStyle for control codes</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            text: String containing text to adjust.</span>
-<span class="sd">            color: Escape codes for color (see ConsoleColors).</span>
+<span class="sd">            **text**: req - String containing text to be colorized.</span>
+<span class="sd">            **color**: req -  The FG color OR color string (see console_color())</span>
+<span class="sd">            **colorBG**: opt - The BG color (see ColorBG)</span>
+<span class="sd">            **style**: opt - The style to be applied (see ColorStyle)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Updated string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">CEND</span><span class="si">}</span><span class="s1">&#39;</span></div>
+        
+        <span class="n">color_code</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">color_code</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">colorBG</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">ColorFG</span><span class="p">)</span> <span class="k">else</span> <span class="n">color</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color_code</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">CEND</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
     <span class="k">def</span> <span class="nf">_output_to_terminal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eol</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">eol</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">LAST_CONSOLE_STR</span> <span class="o">=</span> <span class="n">token</span>
 
-    <span class="k">def</span> <span class="nf">_dump_color_palette</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
-            <span class="n">colors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-                <span class="n">code</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">j</span><span class="p">)</span>
-                <span class="n">colors</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">m</span><span class="se">\\</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s1">m</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m &#39;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span></div>
+    <span class="c1"># def _display_color_palette(cls):</span>
+    <span class="c1">#     x = 0</span>
+    <span class="c1">#     for i in range(24):</span>
+    <span class="c1">#         colors = &quot;&quot;</span>
+    <span class="c1">#         for j in range(5):</span>
+    <span class="c1">#             code = str(x+j)</span>
+    <span class="c1">#             #colors += f&#39;{_ConsoleControl.ESC}[{code}m\\{_ConsoleControl.ESC}[{code}m{_ConsoleControl.ESC}[0m &#39;</span>
+    <span class="c1">#         print(colors)</span>
+
+<div class="viewcode-block" id="ConsoleHelper.color_code">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.color_code">[docs]</a>
+    <span class="k">def</span> <span class="nf">color_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">ColorStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="p">:</span> <span class="n">ColorFG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bg</span><span class="p">:</span> <span class="n">ColorBG</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">style</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">fg</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">bg</span><span class="p">)]</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">codes</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">])</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">return</span> <span class="n">code</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_display_color_palette</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        prints table of formatted text format options</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">style</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">fg</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">38</span><span class="p">):</span>
+                <span class="n">s1</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">for</span> <span class="n">bg</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">48</span><span class="p">):</span>
+                    <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">style</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">fg</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">bg</span><span class="p">)])</span>
+                    <span class="n">s1</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[</span><span class="si">%s</span><span class="s1">m </span><span class="si">%s</span><span class="s1"> </span><span class="se">\x1b</span><span class="s1">[0m&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
 
 <span class="c1"># ==========================================================================================================</span>
@@ -703,12 +740,15 @@
 
 <span class="sd">    Example::</span>
 
+<span class="sd">        from dt_tools.console.console_helper import ConsoleInputHelper</span>
+
 <span class="sd">        ih = ConsoleInputHelper()</span>
 <span class="sd">        resp = ih.get_input_with_timeout(prompt=&#39;Pick a color &gt; &#39;, </span>
 <span class="sd">            valid_responses=[&#39;Red&#39;, &#39;Blue&#39;, &#39;Green&#39;], </span>
 <span class="sd">            default=&#39;Blue&#39;, </span>
 <span class="sd">            timeout_secs=5)</span>
 <span class="sd">        print(f&#39;You selected: {resp}&#39;)    </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">YES_NO_RESPONSE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
@@ -741,6 +781,8 @@
 <span class="sd">            User input or default value (if timeout).</span>
 
 <span class="sd">        Example::</span>
+
+<span class="sd">            from dt_tools.console.console_helper input ConsoleInputHelper</span>
 
 <span class="sd">            ih = ConsoleInputHelper()</span>
 <span class="sd">            resp = ih.get_input_with_timeout(prompt=&#39;Pick a color &gt; &#39;, </span>
@@ -954,93 +996,8 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">console</span> <span class="o">=</span> <span class="n">ConsoleHelper</span><span class="p">()</span>
-    <span class="n">in_help</span> <span class="o">=</span> <span class="n">ConsoleInputHelper</span><span class="p">()</span>
-    <span class="n">enable_ctrl_c_handler</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">(</span><span class="n">cursor_home</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">console_size</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">get_console_size</span><span class="p">()</span>
-    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">console</span><span class="o">.</span><span class="n">cursor_current_position</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">set_viewport</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Console size: </span><span class="si">{</span><span class="n">console_size</span><span class="si">}</span><span class="s1">, cur pos: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">print_line_seperator</span><span class="p">(</span><span class="s1">&#39;Test cursor attributes&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">STEADY_BLOCK</span>
-    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">_CursorAttribute</span><span class="p">:</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">cursor_attribute</span> <span class="o">=</span> <span class="n">attr</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CURSOR: </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">print_line_seperator</span><span class="p">(</span><span class="s1">&#39;Test cursor shape...&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">CursorShape</span><span class="p">:</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">shape</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CURSOR: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">eol</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">STEADY_BLOCK</span>            
-    <span class="n">console</span><span class="o">.</span><span class="n">display_status</span><span class="p">(</span><span class="s1">&#39;Test Rows...&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">print_at</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Row </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">print_with_wait</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Console size: </span><span class="si">{</span><span class="n">console_size</span><span class="si">}</span><span class="s1"> and current position: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Look at the beautiful </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CBLUE</span><span class="p">)</span><span class="si">}</span><span class="s1"> sky&#39;</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;After </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CBLUE</span><span class="p">)</span><span class="si">}</span><span class="s1"> sky&#39;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Check cursor positioning...&#39;</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">print_at</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Should print at  location 10,5 xxxxxxx&quot;</span><span class="p">,</span> <span class="n">eol</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_left</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOL</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;EOL&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">()</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_BOL</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;BOL&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_BOS</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;BOS&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span> <span class="s2">&quot;Moved to 12,1&quot;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOS</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clear to </span><span class="si">{</span><span class="n">console</span><span class="o">.</span><span class="n">cwrap</span><span class="p">(</span><span class="s1">&#39;EOS&#39;</span><span class="p">,</span><span class="n">ConsoleColors</span><span class="o">.</span><span class="n">CGREEN</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Check scrolling...&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Row </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>    
-        <span class="k">if</span> <span class="n">row</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">debug_display_cursor_location</span><span class="p">(</span><span class="s1">&#39;Scrolling...&#39;</span><span class="p">)</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">set_viewport</span><span class="p">()</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="n">console_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">clear_to_EOL</span><span class="p">()</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">console</span><span class="o">.</span><span class="n">_dump_color_palette</span><span class="p">()</span>
-
-    <span class="n">console</span><span class="o">.</span><span class="n">cursor_shape</span> <span class="o">=</span> <span class="n">CursorShape</span><span class="o">.</span><span class="n">DEFAULT</span>
-    <span class="n">resp</span> <span class="o">=</span> <span class="n">in_help</span><span class="o">.</span><span class="n">get_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Pick a color &gt; &#39;</span><span class="p">,</span> 
-                                          <span class="n">valid_responses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">],</span> 
-                                          <span class="n">default</span><span class="o">=</span><span class="s1">&#39;Blue&#39;</span><span class="p">,</span> 
-                                          <span class="n">timeout_secs</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;You selected: </span><span class="si">{</span><span class="n">resp</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">dt_tools.cli.console_examples</span> <span class="kn">import</span> <span class="n">console_helper_demo</span> <span class="k">as</span> <span class="n">demo</span>
+    <span class="n">demo</span><span class="p">()</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;That&#39;s all folks!&quot;</span><span class="p">)</span>
 </pre></div>

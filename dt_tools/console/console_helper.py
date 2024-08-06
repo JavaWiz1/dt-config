@@ -791,7 +791,7 @@ def _interrupt_handler(signum, frame):
 
 
 if __name__ == "__main__":
-    from console_examples import console_helper_demo as demo
+    from dt_tools.cli.console_examples import console_helper_demo as demo
     demo()
 
     print("That's all folks!")

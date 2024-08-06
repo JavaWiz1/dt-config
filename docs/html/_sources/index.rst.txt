@@ -24,7 +24,7 @@ simplify console interaction.
 - **Spinner**: Spinner control to provide visual feedback during long process.
    - Customizable display.    
    - Optionally, display elapsed time.
-   - Selectable visual progress icons.
+   - Selectable spinner icons.
 
 .. toctree::
    :maxdepth: 4
