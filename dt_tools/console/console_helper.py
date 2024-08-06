@@ -16,7 +16,7 @@ Package contains two main classes for working with console windows and text.
 
 Additionally, helper classes/namespaces provided:
 
-- **ConsoleColor**: Color codes for ansi output (see cwrap() function).
+- **ConsoleColor**: Color codes for ansi output (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).
 - **CursorShape**: Ansi codes for controlling cursor shape.
 
 """
@@ -54,7 +54,7 @@ class ColorStyle:
     SELECTED: Final = f'{_ConsoleControl.ESC}[7m'
 
 class ColorFG:
-    """ Console Colors to be used with cwrap()."""
+    """ Console Colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
     BLACK: Final  = f'{_ConsoleControl.ESC}[30m'
     RED: Final    = f'{_ConsoleControl.ESC}[31m'
     GREEN: Final  = f'{_ConsoleControl.ESC}[32m'
@@ -553,6 +553,7 @@ class ConsoleInputHelper():
     Helper for getting input from the console.
 
     Example::
+
         from dt_tools.console.console_helper import ConsoleInputHelper
 
         ih = ConsoleInputHelper()
@@ -561,6 +562,7 @@ class ConsoleInputHelper():
             default='Blue', 
             timeout_secs=5)
         print(f'You selected: {resp}')    
+
     """
 
     YES_NO_RESPONSE: Final[List[str]] = ['Y','y', 'N', 'n']
@@ -591,6 +593,7 @@ class ConsoleInputHelper():
             User input or default value (if timeout).
 
         Example::
+
             from dt_tools.console.console_helper input ConsoleInputHelper
 
             ih = ConsoleInputHelper()

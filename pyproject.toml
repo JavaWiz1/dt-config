@@ -7,7 +7,7 @@ authors = ["Al DAmico <JavaWiz1@hotmail.com>"]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/JavaWiz1/dt-console"
-keywords = ["cli", "console", "command-line", "status bar", "progress bar", "python"]
+keywords = ["python", "dt-tools", "cli", "console", "command-line", "status bar", "progress bar"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",

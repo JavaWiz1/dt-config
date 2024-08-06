@@ -7,6 +7,7 @@ Features:
     - Progress bar reflects percent completion of process.
 
 Example::
+
     from dt_tools.console.progress_bar import ProgressBar
 
     p_bar = ProgressBar("Sample Execution", bar_line=40, max_increments=100)
@@ -14,6 +15,7 @@ Example::
         p_bar.display_progress(i+1)
         do something....
     p_bar.cancel_progress()
+    
 """
 
 import os
