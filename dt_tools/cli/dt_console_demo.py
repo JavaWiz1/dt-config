@@ -116,6 +116,7 @@ def console_helper_demo():
     console.set_viewport()
     console.clear_screen()
     console.print_line_seperator('Display color palette, codes are [style,fg,bg]...', 40)
+    print('')
     time.sleep(wait_seconds)
     console._display_color_palette()
 

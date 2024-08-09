@@ -16,7 +16,8 @@ Package contains two main classes for working with console windows and text.
 
 Additionally, helper classes/namespaces provided:
 
-- **ConsoleColor**: Color codes for ansi output (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).
+- **ConsoleColor**: Color codes for ansi output 
+    (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).
 - **CursorShape**: Ansi codes for controlling cursor shape.
 
 """
@@ -45,7 +46,7 @@ class _ConsoleControl:
     CEND: Final = f'{ESC}[0m'
 
 class ColorStyle:
-    """Console Cursor styles"""
+    """Console Color styles"""
     BOLD: Final     = f'{_ConsoleControl.ESC}[1m'
     ITALIC: Final   = f'{_ConsoleControl.ESC}[3m'
     URL: Final      = f'{_ConsoleControl.ESC}[4m'
@@ -54,7 +55,7 @@ class ColorStyle:
     SELECTED: Final = f'{_ConsoleControl.ESC}[7m'
 
 class ColorFG:
-    """ Console Colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
+    """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
     BLACK: Final  = f'{_ConsoleControl.ESC}[30m'
     RED: Final    = f'{_ConsoleControl.ESC}[31m'
     GREEN: Final  = f'{_ConsoleControl.ESC}[32m'
@@ -74,6 +75,7 @@ class ColorFG:
     WHITE2: Final  = f'{_ConsoleControl.ESC}[97m'
 
 class ColorBG:
+    """Console background font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
     BLACKBG: Final  = f'{_ConsoleControl.ESC}[40m'
     REDBG: Final    = f'{_ConsoleControl.ESC}[41m'
     GREENBG: Final  = f'{_ConsoleControl.ESC}[42m'
@@ -515,25 +517,32 @@ class ConsoleHelper():
 
         return f'{color_code}{text}{_ConsoleControl.CEND}'
 
-    def _output_to_terminal(cls, token: str, eol:str=''):
-        print(token, end=eol, flush=True)
-        cls.LAST_CONSOLE_STR = token
-
-    # def _display_color_palette(cls):
-    #     x = 0
-    #     for i in range(24):
-    #         colors = ""
-    #         for j in range(5):
-    #             code = str(x+j)
-    #             #colors += f'{_ConsoleControl.ESC}[{code}m\\{_ConsoleControl.ESC}[{code}m{_ConsoleControl.ESC}[0m '
-    #         print(colors)
-
     def color_code(cls, style: ColorStyle = None, fg: ColorFG = None, bg: ColorBG= None) -> str:
+        """
+        Create ANSI color code for style, fg color and bg color
+
+        If any parameter (style, fg or bg) is None, current value will be used.
+
+        Args:
+            
+            **style**: (:class:`~ColorStyle`, optional): Font style (ie. bold, italic,...).  
+            **fg**: (:class:`~ColorFG`, optional): Foreground text color.  
+            **bg**: (:class:`~ColorBG`, optional): Background color.  
+
+        Returns:
+            str: The ANSI code representing the desired ANSI atributes.
+            
+        """
         codes = [str(style), str(fg), str(bg)]
         format = ''.join([x for x in codes if x != 'None'])
         code = f'{_ConsoleControl.ESC}[{format}'
         return code
-    
+
+    # == Private Function =================================================================================    
+    def _output_to_terminal(cls, token: str, eol:str=''):
+        print(token, end=eol, flush=True)
+        cls.LAST_CONSOLE_STR = token
+
     def _display_color_palette(cls):
         """
         prints table of formatted text format options
@@ -791,7 +800,7 @@ def _interrupt_handler(signum, frame):
 
 
 if __name__ == "__main__":
-    from dt_tools.cli.console_examples import console_helper_demo as demo
+    from dt_tools.cli.dt_console_demo import console_helper_demo as demo
     demo()
 
     print("That's all folks!")

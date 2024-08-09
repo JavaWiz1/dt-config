@@ -47,14 +47,14 @@ pip install dt-console [--user]
 ## Usage
 A demo cli has been included to show how these modules can be used.  The demo selectively displays each control (console tools, input prompt, messagebox, ProgressBar and Spinner) and source is provided to review for implementation details.
 
-See [dt_tools.cli.console_examples.py](https://github.com/JavaWiz1/dt-console/blob/develop/dt_tools/cli/console_examples.py) for detailed demo examples (runnable demo)
+See [dt_tools.cli.dt_console_demos.py](https://github.com/JavaWiz1/dt-console/blob/develop/dt_tools/cli/dt_console_demos.py) for detailed demo examples (runnable demo)
 
 To run the demo type:
 ```bash
-python -m dt_tools.cli.console_examples
+python -m dt_tools.cli.dt_console_demos
 
 # or if via source (and poetry)
-poetry run python -m dt_tools.cli.console_examples
+poetry run python -m dt_tools.cli.dt_console_demos
 ```
 
 Developer package documentation contains details on all classes and supporting code (i.e. constant namespaces and enums) use for method calls.  Docs can be found [here](https://htmlpreview.github.io/?https://github.com/JavaWiz1/dt-console/blob/develop/docs/html/index.html).
