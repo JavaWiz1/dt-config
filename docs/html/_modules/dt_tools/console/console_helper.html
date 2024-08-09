@@ -89,7 +89,8 @@
 
 <span class="sd">Additionally, helper classes/namespaces provided:</span>
 
-<span class="sd">- **ConsoleColor**: Color codes for ansi output (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).</span>
+<span class="sd">- **ConsoleColor**: Color codes for ansi output </span>
+<span class="sd">    (see :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()` function).</span>
 <span class="sd">- **CursorShape**: Ansi codes for controlling cursor shape.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -120,7 +121,7 @@
 <div class="viewcode-block" id="ColorStyle">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorStyle">[docs]</a>
 <span class="k">class</span> <span class="nc">ColorStyle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Console Cursor styles&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Console Color styles&quot;&quot;&quot;</span>
     <span class="n">BOLD</span><span class="p">:</span> <span class="n">Final</span>     <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
     <span class="n">ITALIC</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3m&#39;</span>
     <span class="n">URL</span><span class="p">:</span> <span class="n">Final</span>      <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[4m&#39;</span>
@@ -132,7 +133,7 @@
 <div class="viewcode-block" id="ColorFG">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorFG">[docs]</a>
 <span class="k">class</span> <span class="nc">ColorFG</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Console Colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`.&quot;&quot;&quot;</span>
     <span class="n">BLACK</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[30m&#39;</span>
     <span class="n">RED</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[31m&#39;</span>
     <span class="n">GREEN</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[32m&#39;</span>
@@ -155,6 +156,7 @@
 <div class="viewcode-block" id="ColorBG">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorBG">[docs]</a>
 <span class="k">class</span> <span class="nc">ColorBG</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Console background font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`.&quot;&quot;&quot;</span>
     <span class="n">BLACKBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[40m&#39;</span>
     <span class="n">REDBG</span><span class="p">:</span> <span class="n">Final</span>    <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[41m&#39;</span>
     <span class="n">GREENBG</span><span class="p">:</span> <span class="n">Final</span>  <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[42m&#39;</span>
@@ -690,33 +692,40 @@
 <span class="sd">            Updated string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="n">color_code</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">color_code</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">colorBG</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">ColorFG</span><span class="p">)</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="n">color_code</span> <span class="o">=</span> <span class="n">color</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">ColorFG</span><span class="p">)</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="n">color_code</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">colorBG</span><span class="p">,</span> <span class="n">style</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color_code</span><span class="si">}{</span><span class="n">text</span><span class="si">}{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">CEND</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_output_to_terminal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eol</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">eol</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">LAST_CONSOLE_STR</span> <span class="o">=</span> <span class="n">token</span>
-
-    <span class="c1"># def _display_color_palette(cls):</span>
-    <span class="c1">#     x = 0</span>
-    <span class="c1">#     for i in range(24):</span>
-    <span class="c1">#         colors = &quot;&quot;</span>
-    <span class="c1">#         for j in range(5):</span>
-    <span class="c1">#             code = str(x+j)</span>
-    <span class="c1">#             #colors += f&#39;{_ConsoleControl.ESC}[{code}m\\{_ConsoleControl.ESC}[{code}m{_ConsoleControl.ESC}[0m &#39;</span>
-    <span class="c1">#         print(colors)</span>
-
 <div class="viewcode-block" id="ConsoleHelper.color_code">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.color_code">[docs]</a>
     <span class="k">def</span> <span class="nf">color_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">ColorStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="p">:</span> <span class="n">ColorFG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bg</span><span class="p">:</span> <span class="n">ColorBG</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create ANSI color code for style, fg color and bg color</span>
+
+<span class="sd">        If any parameter (style, fg or bg) is None, current value will be used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            </span>
+<span class="sd">            **style**: (:class:`~ColorStyle`, optional): Font style (ie. bold, italic,...).  </span>
+<span class="sd">            **fg**: (:class:`~ColorFG`, optional): Foreground text color.  </span>
+<span class="sd">            **bg**: (:class:`~ColorBG`, optional): Background color.  </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The ANSI code representing the desired ANSI atributes.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">codes</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">style</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">fg</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">bg</span><span class="p">)]</span>
         <span class="nb">format</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">codes</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s1">&#39;None&#39;</span><span class="p">])</span>
         <span class="n">code</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="k">return</span> <span class="n">code</span></div>
 
-    
+
+    <span class="c1"># == Private Function =================================================================================    </span>
+    <span class="k">def</span> <span class="nf">_output_to_terminal</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eol</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">eol</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">LAST_CONSOLE_STR</span> <span class="o">=</span> <span class="n">token</span>
+
     <span class="k">def</span> <span class="nf">_display_color_palette</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        prints table of formatted text format options</span>
@@ -996,7 +1005,7 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">dt_tools.cli.dt_console_demos</span> <span class="kn">import</span> <span class="n">console_helper_demo</span> <span class="k">as</span> <span class="n">demo</span>
+    <span class="kn">from</span> <span class="nn">dt_tools.cli.dt_console_demo</span> <span class="kn">import</span> <span class="n">console_helper_demo</span> <span class="k">as</span> <span class="n">demo</span>
     <span class="n">demo</span><span class="p">()</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;That&#39;s all folks!&quot;</span><span class="p">)</span>

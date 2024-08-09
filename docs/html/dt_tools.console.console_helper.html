@@ -121,13 +121,18 @@
 </ul>
 <p>Additionally, helper classes/namespaces provided:</p>
 <ul class="simple">
-<li><p><strong>ConsoleColor</strong>: Color codes for ansi output (see <a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="dt_tools.console.console_helper.ConsoleHelper.cwrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cwrap()</span></code></a> function).</p></li>
+<li><dl class="simple">
+<dt><strong>ConsoleColor</strong>: Color codes for ansi output</dt><dd><p>(see <a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="dt_tools.console.console_helper.ConsoleHelper.cwrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cwrap()</span></code></a> function).</p>
+</dd>
+</dl>
+</li>
 <li><p><strong>CursorShape</strong>: Ansi codes for controlling cursor shape.</p></li>
 </ul>
 <dl class="py class">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorBG">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">ColorBG</span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ColorBG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ColorBG" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Console background font colors to be used with <a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="dt_tools.console.console_helper.ConsoleHelper.cwrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cwrap()</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorBG.BEIGEBG">
 <span class="sig-name descname"><span class="pre">BEIGEBG</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[46m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorBG.BEIGEBG" title="Link to this definition"></a></dt>
@@ -214,7 +219,7 @@
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorFG">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">ColorFG</span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ColorFG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ColorFG" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Console Colors to be used with <a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="dt_tools.console.console_helper.ConsoleHelper.cwrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cwrap()</span></code></a>.</p>
+<p>Console font colors to be used with <a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="dt_tools.console.console_helper.ConsoleHelper.cwrap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cwrap()</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorFG.BEIGE">
 <span class="sig-name descname"><span class="pre">BEIGE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[36m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorFG.BEIGE" title="Link to this definition"></a></dt>
@@ -301,7 +306,7 @@
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">ColorStyle</span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ColorStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Console Cursor styles</p>
+<p>Console Color styles</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.BLINK">
 <span class="sig-name descname"><span class="pre">BLINK</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[5m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.BLINK" title="Link to this definition"></a></dt>
@@ -408,7 +413,24 @@ con.print_at(5, 10, token)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.color_code">
 <span class="sig-name descname"><span class="pre">color_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle" title="dt_tools.console.console_helper.ColorStyle"><span class="pre">ColorStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.color_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.color_code" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Create ANSI color code for style, fg color and bg color</p>
+<p>If any parameter (style, fg or bg) is None, current value will be used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**style**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle" title="dt_tools.console.console_helper.ColorStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorStyle</span></code></a>, optional): Font style (ie. bold, italic,…).</p></li>
+<li><p><strong>**fg**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorFG</span></code></a>, optional): Foreground text color.</p></li>
+<li><p><strong>**bg**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorBG</span></code></a>, optional): Background color.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ANSI code representing the desired ANSI atributes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.console_hide">
