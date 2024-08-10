@@ -163,4 +163,5 @@ Spinner is an easy to use, customizable console Spinner control which displays s
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
+The MessageBox code was derived from:  
 PyMsgBox - BSD for PyMsgBox (see source for msgbox.py)
