@@ -41,18 +41,23 @@ if sys.platform == "win32":
 
 class _ConsoleControl:
     """Console control characters."""
-    ESC: Final  = '\u001b'
+    # ESC: Final  = '\u001b'
+    ESC: Final = "\x1B"
     BELL: Final = '\a'
     CEND: Final = f'{ESC}[0m'
 
 class ColorStyle:
     """Console Color styles"""
-    BOLD: Final     = f'{_ConsoleControl.ESC}[1m'
-    ITALIC: Final   = f'{_ConsoleControl.ESC}[3m'
-    URL: Final      = f'{_ConsoleControl.ESC}[4m'
-    BLINK: Final    = f'{_ConsoleControl.ESC}[5m'
-    BLINK2: Final   = f'{_ConsoleControl.ESC}[6m'
-    SELECTED: Final = f'{_ConsoleControl.ESC}[7m'
+    TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
+    BOLD: Final       = f'{_ConsoleControl.ESC}[1m'
+    DIM: Final        = f'{_ConsoleControl.ESC}[2m]'
+    ITALIC: Final     = f'{_ConsoleControl.ESC}[3m'
+    URL: Final        = f'{_ConsoleControl.ESC}[4m'
+    BLINK: Final      = f'{_ConsoleControl.ESC}[5m'
+    BLINK2: Final     = f'{_ConsoleControl.ESC}[6m'
+    SELECTED: Final   = f'{_ConsoleControl.ESC}[7m'
+    HIDDEN: Final     = f'{_ConsoleControl.ESC}[8m'
+    STRIKETHRU: Final = f'{_ConsoleControl.ESC}[9m'
 
 class ColorFG:
     """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
@@ -76,23 +81,23 @@ class ColorFG:
 
 class ColorBG:
     """Console background font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
-    BLACKBG: Final  = f'{_ConsoleControl.ESC}[40m'
-    REDBG: Final    = f'{_ConsoleControl.ESC}[41m'
-    GREENBG: Final  = f'{_ConsoleControl.ESC}[42m'
-    YELLOWBG: Final = f'{_ConsoleControl.ESC}[43m'
-    BLUEBG: Final   = f'{_ConsoleControl.ESC}[44m'
-    VIOLETBG: Final = f'{_ConsoleControl.ESC}[45m'
-    BEIGEBG: Final  = f'{_ConsoleControl.ESC}[46m'
-    WHITEBG: Final  = f'{_ConsoleControl.ESC}[47m'
+    BLACK: Final  = f'{_ConsoleControl.ESC}[40m'
+    RED: Final    = f'{_ConsoleControl.ESC}[41m'
+    GREEN: Final  = f'{_ConsoleControl.ESC}[42m'
+    YELLOW: Final = f'{_ConsoleControl.ESC}[43m'
+    BLUE: Final   = f'{_ConsoleControl.ESC}[44m'
+    VIOLET: Final = f'{_ConsoleControl.ESC}[45m'
+    BEIGE: Final  = f'{_ConsoleControl.ESC}[46m'
+    WHITE: Final  = f'{_ConsoleControl.ESC}[47m'
 
-    GREYBG: Final    = f'{_ConsoleControl.ESC}[100m'
-    REDBG2: Final    = f'{_ConsoleControl.ESC}[101m'
-    GREENBG2: Final  = f'{_ConsoleControl.ESC}[102m'
-    YELLOWBG2: Final = f'{_ConsoleControl.ESC}[103m'
-    BLUEBG2: Final   = f'{_ConsoleControl.ESC}[104m'
-    VIOLETBG2: Final = f'{_ConsoleControl.ESC}[105m'
-    BEIGEBG2: Final  = f'{_ConsoleControl.ESC}[106m'
-    WHITEBG2: Final  = f'{_ConsoleControl.ESC}[107m'
+    GREY: Final    = f'{_ConsoleControl.ESC}[100m'
+    RED2: Final    = f'{_ConsoleControl.ESC}[101m'
+    GREEN2: Final  = f'{_ConsoleControl.ESC}[102m'
+    YELLOW2: Final = f'{_ConsoleControl.ESC}[103m'
+    BLUE2: Final   = f'{_ConsoleControl.ESC}[104m'
+    VIOLET2: Final = f'{_ConsoleControl.ESC}[105m'
+    BEIGE2: Final  = f'{_ConsoleControl.ESC}[106m'
+    WHITE2: Final  = f'{_ConsoleControl.ESC}[107m'
 
 class CursorShape(Enum):
     """Constants defining available cursor shapes."""
@@ -104,21 +109,14 @@ class CursorShape(Enum):
     BLINKING_BAR = f'{_ConsoleControl.ESC}[5 q'
     STEADY_BAR = f'{_ConsoleControl.ESC}[6 q'
 
-class _FormatControls:
-    """Constants for formatting strings."""
-    end: Final = f'{_ConsoleControl.ESC}[0m'
-    underline: Final = f'{_ConsoleControl.ESC}[4m'
-    bold: Final = f'{_ConsoleControl.ESC}[1m'
-    spacer: Final = ' ͏'
-
 class _CursorAttribute(Enum):
     """Cursor control characters (Visability, Blink?)."""
     HIDE = f'{_ConsoleControl.ESC}[?25l'
     SHOW = f'{_ConsoleControl.ESC}[?25h'
-    SOLID = f'{_ConsoleControl.ESC}[?12l'
-    """Solid (non-blinking) Cursor"""
-    BLINKING = f'{_ConsoleControl.ESC}[?12h' # Does not work (sometimes)?
-    """Blinking Cursor"""
+    # SOLID = f'{_ConsoleControl.ESC}[?12l'
+    # """Solid (non-blinking) Cursor"""
+    # BLINKING = f'{_ConsoleControl.ESC}[?12h' # Does not work (sometimes)?
+    # """Blinking Cursor"""
 
 class _CursorClear:
     EOS: Final = f'{_ConsoleControl.ESC}[0J'
@@ -139,6 +137,13 @@ class WindowControl:
     WINDOW_HIDE: Final  = f'{_ConsoleControl.ESC}[2t'
     WINDOW_SHOW: Final  = f'{_ConsoleControl.ESC}[1t'
     WINDOW_TITLE: Final = f'{_ConsoleControl.ESC}]2;%title%\a'
+
+class _FormatControls:
+    """Constants for formatting strings."""
+    end: Final = f'{_ConsoleControl.ESC}[0m'
+    underline: Final = f'{_ConsoleControl.ESC}[4m'
+    bold: Final = f'{_ConsoleControl.ESC}[1m'
+    spacer: Final = ' ͏'
 
 
 # https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
@@ -181,14 +186,60 @@ class ConsoleHelper():
         cls._output_to_terminal(token.value)
     cursor_shape = property(None, _cursor_shape)
     
+    @classmethod
+    def get_console_size(cls) -> Tuple[int, int]:
+        """
+        Return console size in rows and columns.
+
+        Returns:
+            Size as (rows, columns).
+        """
+        rows = int(os.getenv('LINES', -1))
+        columns = int(os.getenv('COLUMNS', -1))
+        if rows <= 0 or columns <= 0:
+            size = os.get_terminal_size()
+            rows = int(size.lines)
+            columns = int(size.columns)
+
+        return (rows, columns)
+
+    @classmethod
     def console_hide(cls):
         """Minimize console/terminal window"""
         cls._output_to_terminal(WindowControl.WINDOW_HIDE)
     
+    @classmethod
     def console_show(cls):
         """Restore console/terminal window"""
         cls._output_to_terminal(WindowControl.WINDOW_SHOW)
         
+    @classmethod
+    def set_console_viewport(cls, start_row: int = None, end_row: int = None):
+        """
+        Set console scrollable area to start_row / end_row.  Default is whole screen.
+
+        The viewport defines area (rows) text scrolls within.  If no
+        arguments provided, viewport is defaulted to whole screen.
+
+        Keyword Arguments:
+            start_row: Staring row of viewport (default: {None}).
+            end_row: Ending row of viewport (default: {None}).
+
+        Raises:
+            ValueError: Invalid start|end row.
+        """
+
+        max_row, max_col = cls.get_console_size()
+        starting_row = 1 if start_row is None else start_row
+        ending_row = int(max_row) if end_row is None else end_row
+        if starting_row < 1 or starting_row > ending_row or starting_row > max_row:
+            raise ValueError(f"set_viewport(): Invalid start row: {start_row}")
+        if ending_row > max_row:
+            raise ValueError(f'set_viewport(): Invalid end row: {end_row}')
+
+        cls._output_to_terminal(f'{_ConsoleControl.ESC}[{starting_row};{ending_row}r')
+
+    @classmethod
     def console_title(cls, title: str):
         """
         Set the console/window title.
@@ -200,33 +251,54 @@ class ConsoleHelper():
         print(title_cmd)
         cls._output_to_terminal(title_cmd)
 
+    @classmethod
+    def cursor_current_position(cls) -> Tuple[int, int]:
+        """
+        Current cursor location.
+
+        Returns:
+            Cusor location: (row, col).
+        """
+        if sys.platform == "win32":
+            sys.stdout.write("\x1b[6n")
+            sys.stdout.flush()
+            buffer = bytes()
+            while msvcrt.kbhit():
+                buffer += msvcrt.getch()
+            hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
+            # print(hex_loc)
+            token = hex_loc.split(';')
+            row = token[0]
+            col = token[1]
+        else:
+            row, col = os.popen('stty size', 'r').read().split()
+        
+        return (int(row), int(col))
+
+    @classmethod
+    def cursor_save_position(cls):
+        """
+        Save cursor position, can be restored with restore_position() call.
+        """
+        cls._output_to_terminal(f'{_ConsoleControl.ESC}[s')
+
+    @classmethod
+    def cursor_restore_position(cls):
+        """
+        Restore cursor position, saved with the save_position() call.
+        """
+        cls._output_to_terminal(f'{_ConsoleControl.ESC}[u')
+
+    @classmethod
     def cursor_off(cls):
         cls._output_to_terminal(_CursorAttribute.HIDE.value)
 
+    @classmethod
     def cursor_on(cls):
         """Turn console cursor on"""
         cls._output_to_terminal(_CursorAttribute.SHOW.value)
 
-    def clear_to_EOS(cls):
-        """Clear from cursor to end of screen"""
-        cls._output_to_terminal(_CursorClear.EOS)
-
-    def clear_to_BOS(cls):
-        """Clear from cursor to beginning of screen"""
-        cls._output_to_terminal(_CursorClear.BOS)
-
-    def clear_line(cls):
-        """Clear current line"""
-        cls._output_to_terminal(_CursorClear.LINE)
-
-    def clear_to_EOL(cls):
-        """Clear from cursor to end of line"""
-        cls._output_to_terminal(_CursorClear.EOL)
-    
-    def clear_to_BOL(cls):
-        """Clear from cursor to beginning of line"""
-        cls._output_to_terminal(_CursorClear.BOL)
-
+    @classmethod
     def clear_screen(cls, cursor_home: bool = True):
         """
         Clear screen and home cursor.
@@ -238,6 +310,32 @@ class ConsoleHelper():
         if cursor_home:
             cls.cursor_move(1, 1)
 
+    @classmethod
+    def clear_to_EOS(cls):
+        """Clear from cursor to end of screen"""
+        cls._output_to_terminal(_CursorClear.EOS)
+
+    @classmethod
+    def clear_to_BOS(cls):
+        """Clear from cursor to beginning of screen"""
+        cls._output_to_terminal(_CursorClear.BOS)
+
+    @classmethod
+    def clear_line(cls):
+        """Clear current line"""
+        cls._output_to_terminal(_CursorClear.LINE)
+
+    @classmethod
+    def clear_to_EOL(cls):
+        """Clear from cursor to end of line"""
+        cls._output_to_terminal(_CursorClear.EOL)
+    
+    @classmethod
+    def clear_to_BOL(cls):
+        """Clear from cursor to beginning of line"""
+        cls._output_to_terminal(_CursorClear.BOL)
+
+    @classmethod
     def cursor_up(cls, steps: int = 1):
         """
         Move cursor up.
@@ -247,6 +345,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}A')
 
+    @classmethod
     def cursor_down(cls, steps: int = 1):
         """
         Move cursor down.
@@ -256,6 +355,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}B')
 
+    @classmethod
     def cursor_right(cls, steps: int = 1):
         """
         Move cursor right.
@@ -265,6 +365,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}C')
 
+    @classmethod
     def cursor_left(cls, steps: int = 1):
         """
         Move cursor left.
@@ -274,6 +375,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}D')
 
+    @classmethod
     def cursor_scroll_up(cls, steps: int = 1):
         """
         Scroll screen contents up.
@@ -283,6 +385,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}S')
 
+    @classmethod
     def cursor_scroll_down(cls, steps: int = 1):
         """
         Scroll screen contents down.
@@ -292,7 +395,7 @@ class ConsoleHelper():
         """
         cls._output_to_terminal(f'{_ConsoleControl.ESC}[{steps}T')
 
-
+    @classmethod
     def cursor_move(cls, row:int = -1, column:int = -1) -> bool:
         """
         Move cursor to spefic location on console.
@@ -323,7 +426,21 @@ class ConsoleHelper():
         cls._output_to_terminal(f"{_ConsoleControl.ESC}[%d;%dH" % (row, column))    
         return True
 
-    def print_at(cls, row: int, col: int, text: str, eol='') -> bool:
+    @classmethod
+    def print(cls, msg, eol='\n', as_bytes:bool = False, to_stderr:bool = False):
+        """
+        Print msg to console.
+
+        Args:
+            msg (any): Message to print to console.
+            eol (str, optional): End of line character. Defaults to '\n'.
+            as_bytes (bool, optional): Output as bytes. Defaults to False.
+            to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.
+        """
+        cls._output_to_terminal(msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
+
+    @classmethod
+    def print_at(cls, row: int, col: int, text: str, eol='', as_bytes: bool = False, to_stderr:bool = False) -> bool:
         """
         Print text at specific location on console.
 
@@ -335,93 +452,48 @@ class ConsoleHelper():
             text: String to write to console.
 
         Keyword Arguments:
-            eol: _description_ (default: {''}).
+            eol: End of line character (default: {''}).
+            as_bytes: Output msg as bytes (default: {False}).
+            to_stderr: Output to stderr (instead of stdout) (default: {False}).
 
         Returns:
             True if print to console successful, False if invalid location.
         """
-
         if cls.cursor_move(row, col):
-            cls._output_to_terminal(text, eol)
+            cls._output_to_terminal(text, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
             return True
         return False
         
-    def cursor_current_position(cls) -> Tuple[int, int]:
+    @classmethod
+    def print_with_wait(cls, text: str, wait: float = 0.0, eol='\n'):
         """
-        Current cursor location.
+        Print text at current location and wait specified number of seconds.
 
-        Returns:
-            Cusor location: (row, col).
-        """
-        if sys.platform == "win32":
-            sys.stdout.write("\x1b[6n")
-            sys.stdout.flush()
-            buffer = bytes()
-            while msvcrt.kbhit():
-                buffer += msvcrt.getch()
-            hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
-            # print(hex_loc)
-            token = hex_loc.split(';')
-            row = token[0]
-            col = token[1]
-        else:
-            row, col = os.popen('stty size', 'r').read().split()
-        
-        return (int(row), int(col))
-
-    def cursor_save_position(cls):
-        """
-        Save cursor position, can be restored with restore_position() call.
-        """
-        cls._output_to_terminal(f'{_ConsoleControl.ESC}[s')
-
-    def cursor_restore_position(cls):
-        """
-        Restore cursor position, saved with the save_position() call.
-        """
-        cls._output_to_terminal(f'{_ConsoleControl.ESC}[u')
-
-    def get_console_size(cls) -> Tuple[int, int]:
-        """
-        Return console size in rows and columns.
-
-        Returns:
-            Size as (rows, columns).
-        """
-        rows = int(os.getenv('LINES', -1))
-        columns = int(os.getenv('COLUMNS', -1))
-        if rows <= 0 or columns <= 0:
-            size = os.get_terminal_size()
-            rows = int(size.lines)
-            columns = int(size.columns)
-
-        return (rows, columns)
-
-    def set_viewport(cls, start_row: int = None, end_row: int = None):
-        """
-        Set console scrollable area to start_row / end_row.  Default is whole screen.
-
-        The viewport defines area (rows) text scrolls within.  If no
-        arguments provided, viewport is defaulted to whole screen.
+        Arguments:
+            text: Text to be printed.
 
         Keyword Arguments:
-            start_row: Staring row of viewport (default: {None}).
-            end_row: Ending row of viewport (default: {None}).
+            wait: Number of seconds to wait (default: {0.0}).
+            eol: EndOfLine character (default: {'\\n'}).
 
-        Raises:
-            ValueError: Invalid start|end row.
         """
+        print(text, end=eol, flush=True)
+        if wait > 0:
+            time.sleep(wait)
 
-        max_row, max_col = cls.get_console_size()
-        starting_row = 1 if start_row is None else start_row
-        ending_row = int(max_row) if end_row is None else end_row
-        if starting_row < 1 or starting_row > ending_row or starting_row > max_row:
-            raise ValueError(f"set_viewport(): Invalid start row: {start_row}")
-        if ending_row > max_row:
-            raise ValueError(f'set_viewport(): Invalid end row: {end_row}')
+    @classmethod
+    def print_line_seperator(cls, text: str = '', length: int = -1):
+        """
+        Print line separator at current cursor position.
 
-        cls._output_to_terminal(f'{_ConsoleControl.ESC}[{starting_row};{ending_row}r')
+        Keyword Arguments:
+            text: Text to be displayed within the separator line (default: {''}).
+            length: Lenght of the separator line  (default: {-1}).
+            if < 0, use console width.
+        """
+        print(cls.sprint_line_separator(text, length))
 
+    @classmethod
     def display_status(cls, text, wait: int = 0):
         """
         Display status message on last row of screen.
@@ -440,7 +512,8 @@ class ConsoleHelper():
         cls.cursor_move(save_row, save_col)   
         if wait > 0:
             time.sleep(wait)
-
+    
+    @classmethod
     def sprint_line_separator(cls, text: str = '', length: int = -1) -> str:
         """
         Return string underline (seperator) with optional text.
@@ -461,17 +534,7 @@ class ConsoleHelper():
         line_out = f'{_FormatControls.underline}{text}{" "*(fill_len-1)}{_FormatControls.spacer}{_FormatControls.end}'
         return line_out
 
-    def print_line_seperator(cls, text: str = '', length: int = -1):
-        """
-        Print line separator at current cursor position.
-
-        Keyword Arguments:
-            text: Text to be displayed within the separator line (default: {''}).
-            length: Lenght of the separator line  (default: {-1}).
-            if < 0, use console width.
-        """
-        print(cls.sprint_line_separator(text, length))
-
+    @classmethod
     def debug_display_cursor_location(cls, msg:str = ""):
         """
         Display current location (row, col) in status area.
@@ -481,23 +544,8 @@ class ConsoleHelper():
         """
         cls.display_status(f'Cursor: {str(ConsoleHelper().cursor_current_position())}  {msg}')
 
-    def print_with_wait(cls, text: str, wait: float = 0.0, eol='\n'):
-        """
-        Print text at current location and wait specified number of seconds.
-
-        Arguments:
-            text: Text to be printed.
-
-        Keyword Arguments:
-            wait: Number of seconds to wait (default: {0.0}).
-            eol: EndOfLine character (default: {'\\n'}).
-
-        """
-        print(text, end=eol, flush=True)
-        if wait > 0:
-            time.sleep(wait)
-
-    def cwrap(cls, text: str, color: Union[ColorFG, str], colorBG: ColorBG = None, style: ColorStyle = None) -> str:
+    @classmethod
+    def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
         """
         Wrap text with color codes for console display.
         
@@ -512,12 +560,12 @@ class ConsoleHelper():
         Returns:
             Updated string.
         """
-        
-        color_code = color if isinstance(color, ColorFG) else cls.color_code(color, colorBG, style)
+        color_code = ConsoleHelper.color_code(style, color, bg)
 
         return f'{color_code}{text}{_ConsoleControl.CEND}'
 
-    def color_code(cls, style: ColorStyle = None, fg: ColorFG = None, bg: ColorBG= None) -> str:
+    @classmethod
+    def color_code(cls, style: ColorStyle = ColorStyle.TRANSPARENT, fg: ColorFG = None, bg: ColorBG= None) -> str:
         """
         Create ANSI color code for style, fg color and bg color
 
@@ -534,26 +582,33 @@ class ConsoleHelper():
             
         """
         codes = [str(style), str(fg), str(bg)]
-        format = ''.join([x for x in codes if x != 'None'])
-        code = f'{_ConsoleControl.ESC}[{format}'
+        format = ';'.join([x.removeprefix(f'{_ConsoleControl.ESC}[').removesuffix('m') for x in codes if x != 'None'])
+        code = f'{_ConsoleControl.ESC}[{format}m'
         return code
 
-    # == Private Function =================================================================================    
-    def _output_to_terminal(cls, token: str, eol:str=''):
-        print(token, end=eol, flush=True)
+    # == Private Function ================================================================================= 
+    @classmethod   
+    def _output_to_terminal(cls, token: str, eol:str='', as_bytes: bool = False, to_stderr: bool = False):
+        
+        output_str = bytes(token,'utf-8') if as_bytes else token
+        if to_stderr:
+            print(output_str, eol=eol, flush=True, file=sys.stderr)
+        else:
+            print(output_str, end=eol, flush=True)
         cls.LAST_CONSOLE_STR = token
 
+    @classmethod
     def _display_color_palette(cls):
         """
         prints table of formatted text format options
         """
         for style in range(8):
             for fg in range(30, 38):
-                s1 = ''
+                token = ''
                 for bg in range(40, 48):
                     format = ';'.join([str(style), str(fg), str(bg)])
-                    s1 += '\x1b[%sm %s \x1b[0m' % (format, format)
-                print(s1)
+                    token += '\x1b[%sm %s \x1b[0m' % (format, format)
+                print(token)
             print('\n')
 
 # ==========================================================================================================
@@ -801,6 +856,8 @@ def _interrupt_handler(signum, frame):
 
 if __name__ == "__main__":
     from dt_tools.cli.dt_console_demo import console_helper_demo as demo
+    from dt_tools.console.console_helper import ConsoleHelper, ColorFG
+    console = ConsoleHelper()
+    console.clear_screen()
     demo()
-
     print("That's all folks!")
