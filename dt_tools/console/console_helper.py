@@ -431,11 +431,12 @@ class ConsoleHelper():
         """
         Print msg to console.
 
-        Args:
-            msg (any): Message to print to console.
-            eol (str, optional): End of line character. Defaults to '\n'.
-            as_bytes (bool, optional): Output as bytes. Defaults to False.
-            to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.
+        Arguments:  
+            msg (any): Message to print to console.  
+            eol (str, optional): End of line character. Defaults to '\\n'.  
+            as_bytes (bool, optional): Output as bytes. Defaults to False.  
+            to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.  
+
         """
         cls._output_to_terminal(msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
 
