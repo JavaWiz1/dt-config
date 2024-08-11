@@ -61,7 +61,7 @@ class Spinner():
         spinner     : type of spinner pattern
         show_elapsed: suffix displaying elapsed h:m:s
     """
-    def __init__(self, caption: str, spinner: SpinnerType = SpinnerType.NORMAL_SPINNER, show_elapsed: bool = False, str_end = '\r'):
+    def __init__(self, caption: str, spinner: SpinnerType = SpinnerType.NORMAL_SPINNER, show_elapsed: bool = False, str_end = ''):
         self._caption = caption
         self._suffix = ''
         self._last_suffix = ''
@@ -75,7 +75,7 @@ class Spinner():
         self._idx = 99
         self._finished = False
         self._spinner_thread = None
-        self.console = ConsoleHelper()
+        # self.console = ConsoleHelper()
         LOGGER.trace("Spinner initialized.")
 
     def start_spinner(self, caption_suffix: str = ''):
@@ -90,7 +90,7 @@ class Spinner():
             if self._spinner_thread.is_alive():
                 self.stop_spinner()
 
-        self.console.cursor_off()
+        ConsoleHelper.cursor_off()
         self._suffix = caption_suffix
         self._spinner_thread = threading.Thread(target=self._display_spinner)
         self._start_time = dt.now()
@@ -109,8 +109,8 @@ class Spinner():
             self._spinner_thread.join()
             self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
             self._finished = False
-        self.console.clear_line()
-        self.console.cursor_on()
+        ConsoleHelper.clear_line()
+        ConsoleHelper.cursor_on()
 
     def caption_suffix(self, suffix: str):
         """
@@ -133,18 +133,18 @@ class Spinner():
         """
         return self._elapsed_time
 
-    def _calculate_suffix(self) -> str:
-        suffix = self._suffix
-        if suffix != self._last_suffix:
-            suffix_len = len(suffix)
-            last_suffix_len = len(self._last_suffix)
-            self._last_suffix = suffix
-            if suffix_len < last_suffix_len:
-                space_len = last_suffix_len - suffix_len
-                suffix = f'{self._suffix}{" "*space_len}'
-                # print(f'|{suffix}|')
+    # def _calculate_suffix(self) -> str:
+    #     suffix = self._suffix
+    #     if suffix != self._last_suffix:
+    #         suffix_len = len(suffix)
+    #         last_suffix_len = len(self._last_suffix)
+    #         self._last_suffix = suffix
+    #         if suffix_len < last_suffix_len:
+    #             space_len = last_suffix_len - suffix_len
+    #             suffix = f'{self._suffix}{" "*space_len}'
+    #             # print(f'|{suffix}|')
 
-        return suffix
+    #     return suffix
 
     def _calculate_elapsed_time(self, end_time: float, start_time: float) -> str:
         diff = end_time - start_time
@@ -158,20 +158,24 @@ class Spinner():
         delay = self._spinner.value['speed']
         loopcnt = 0
         elapsed_break = int(1 / delay) # 1 seconds
+        elapsed_display = ' '*len(self._elapsed_time)
         while not self._finished and threading.main_thread().is_alive():
             cursor = self._get_cursor()
-            suffix = self._calculate_suffix()
+            # suffix = self._calculate_suffix()
+
             if self._show_elapsed and loopcnt % elapsed_break == 0:
                 self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
-                terminal_line = f'\r{self._caption} {cursor}  {self._elapsed_time} {suffix}'
-            else:
-                terminal_line = f'\r{self._caption} {cursor}  {suffix}'
-            print(terminal_line, end = self._str_end)
+                elapsed_display = self._elapsed_time
+            terminal_line = f'{self._caption} {cursor}  {elapsed_display} {self._suffix}'
+            ConsoleHelper.print(terminal_line, eol='')
+            ConsoleHelper.clear_to_EOL()
+            ConsoleHelper.cursor_move(column=1)
             time.sleep(delay)
             loopcnt += 1
 
-        terminal_line = ' ' * len(terminal_line)
-        print(terminal_line, end = self._str_end)
+        # terminal_line = ' ' * len(terminal_line)
+        ConsoleHelper.clear_line()
+        # print(terminal_line, end = self._str_end)
 
     def _get_cursor(self):
         self._idx += 1
@@ -183,7 +187,9 @@ class Spinner():
 if __name__ == "__main__":
     for spinner_type in SpinnerType:
         spinner = Spinner(spinner_type, spinner_type, True)
-        spinner.start_spinner()
-        for cnt in range(1,20):
+        spinner.start_spinner("Begin")
+        for cnt in range(1,25):
+            if cnt % 5 == 0:
+                spinner.caption_suffix(f'Iteration {cnt}')
             time.sleep(.25)
         spinner.stop_spinner()

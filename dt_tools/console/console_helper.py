@@ -632,6 +632,7 @@ class ConsoleInputHelper():
     YES_NO_RESPONSE: Final[List[str]] = ['Y','y', 'N', 'n']
     """Yes/No valid_argument list constant"""
 
+    @classmethod
     def get_input_with_timeout(cls, prompt: str, valid_responses: list = [],  
                                default: str = None, timeout_secs: int = -1, 
                                parms_ok: bool = False) -> Union[str, Tuple[str, list]]:
@@ -708,6 +709,7 @@ class ConsoleInputHelper():
         
         return chk_response
 
+    @classmethod
     def wait_with_bypass(cls, secs: int):
         """
         Pause execution for specified number of seconds.
@@ -719,6 +721,21 @@ class ConsoleInputHelper():
         """
         cls.get_input_with_timeout("", timeout_secs=secs)
 
+    @classmethod
+    def _input_with_timeout_nix(cls,prompt: str, timeout_secs: int, default: str) -> str:
+        # set signal handler for *nix systems
+        LOGGER.trace("_input_with_timeout_nix()")
+        signal.signal(signal.SIGALRM, ConsoleInputHelper._alarm_handler)
+        signal.alarm(timeout_secs) # produce SIGALRM in `timeout` seconds
+
+        response = default
+        try:
+            response = input(prompt)
+        finally:
+            signal.alarm(0) # cancel alarm
+            return response
+
+    @classmethod
     def _input_with_timeout_win(cls, prompt: str, timeout_secs: int,  default: str= None) -> str:
         LOGGER.trace("_input_with_timeout_win()")
         sys.stdout.write(prompt)
@@ -744,18 +761,6 @@ class ConsoleInputHelper():
     def _alarm_handler(signum, frame):
         raise TimeoutError('time expired.')
 
-    def _input_with_timeout_nix(prompt: str, timeout_secs: int, default: str) -> str:
-        # set signal handler for *nix systems
-        LOGGER.trace("_input_with_timeout_nix()")
-        signal.signal(signal.SIGALRM, ConsoleInputHelper._alarm_handler)
-        signal.alarm(timeout_secs) # produce SIGALRM in `timeout` seconds
-
-        response = default
-        try:
-            response = input(prompt)
-        finally:
-            signal.alarm(0) # cancel alarm
-            return response
 
 # -------------------------------------------------------------------------------------------
 # Miscellaneous Routines
