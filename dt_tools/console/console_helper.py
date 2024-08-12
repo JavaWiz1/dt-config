@@ -593,7 +593,7 @@ class ConsoleHelper():
         
         output_str = bytes(token,'utf-8') if as_bytes else token
         if to_stderr:
-            print(output_str, eol=eol, flush=True, file=sys.stderr)
+            print(output_str, end=eol, flush=True, file=sys.stderr)
         else:
             print(output_str, end=eol, flush=True)
         cls.LAST_CONSOLE_STR = token
