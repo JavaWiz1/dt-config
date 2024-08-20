@@ -35,8 +35,8 @@ def demo():
         console.print_with_wait(f'CURSOR: {attr}', eol=' ')
         console.cursor_set_attribute(attr)
         console.print_with_wait('', wait_seconds, eol='')
-        print()
-    print()
+        print('')
+    print('')
     
     console_input.get_input_with_timeout('Press ENTER to continue ', timeout_secs=10)
     console.cursor_restore_position()
@@ -49,12 +49,12 @@ def demo():
         console.print(f'CURSOR: {shape}', eol= ' ')
         console.print_with_wait('', wait_seconds, eol='')
         # console.print_with_wait(f'CURSOR: {shape} {shape.value}', wait_seconds, eol = ' ')
-        print()
+        print('')
     
     console_input.get_input_with_timeout('Press ENTER to continue ', timeout_secs=10)
     console.clear_screen()
 
-    console.cursor_set_shape = CursorShape.STEADY_BLOCK            
+    console.cursor_set_shape(CursorShape.STEADY_BLOCK)            
     console.display_status('Test Rows...')
     for row in range(1, console_size[0]+1):
         console.print_at(row, 60, f'Row {row}', eol='')
@@ -114,7 +114,7 @@ def demo():
     time.sleep(wait_seconds)
     console._display_color_palette()
 
-    console.cursor_set_shape = CursorShape.DEFAULT
+    console.cursor_set_shape(CursorShape.DEFAULT)
     print(f"End of {console.cwrap('ConsoleHelper', ColorFG.YELLOW)} demo.")
 
 if __name__ == '__main__':

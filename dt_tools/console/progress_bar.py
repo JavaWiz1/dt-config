@@ -110,7 +110,7 @@ class ProgressBar():
         self._finshed = True
         self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
         self.console.cursor_on()
-        print()
+        self.console.print('')
         self._started = False
 
     @property

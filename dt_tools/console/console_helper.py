@@ -178,13 +178,25 @@ class ConsoleHelper():
     """
     LAST_CONSOLE_STR: str = None
 
-    def _cursor_attribute(cls, token: _CursorAttribute):
-        cls._output_to_terminal(token.value)
-    cursor_attribute = property(None, _cursor_attribute)
+    @classmethod
+    def cursor_set_attribute(cls, attr: Union[_CursorAttribute, str]):
+        token = attr.value if isinstance(attr, _CursorAttribute) else attr
+        cls._output_to_terminal(token)
 
-    def _cursor_shape(cls, token: CursorShape):
-        cls._output_to_terminal(token.value)
-    cursor_shape = property(None, _cursor_shape)
+    # def _cursor_attribute(cls, token: _CursorAttribute):
+    #     print(f'token: {token}')
+    #     cls._output_to_terminal(token.value)
+    # cursor_attribute = property(None, _cursor_attribute)
+
+    @classmethod
+    def cursor_set_shape(cls, shape: Union[CursorShape, str]):
+        token = shape.value if isinstance(shape, CursorShape) else shape
+        cls._output_to_terminal(token)
+
+    # def _cursor_shape(cls, token: CursorShape):
+    #     print(f'token: {token}')
+    #     cls._output_to_terminal(token.value)
+    # cursor_shape = property(None, _cursor_shape)
     
     @classmethod
     def get_console_size(cls) -> Tuple[int, int]:
@@ -749,11 +761,11 @@ class ConsoleInputHelper():
                 result.append(msvcrt.getwche()) #XXX can it block on multibyte characters?
                 endtime = timer() + timeout_secs  # Reset timer each time a key is pressed.
                 if result[-1] == '\r':   #XXX check what Windows returns here
-                    print()
+                    print('')
                     return ''.join(result[:-1])
             time.sleep(0.04) # just to yield to other processes/threads
         if result:
-            print()
+            print('')
             return ''.join(result)
         elif default:
             print(default)

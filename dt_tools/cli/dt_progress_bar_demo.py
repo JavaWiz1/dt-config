@@ -4,9 +4,9 @@ from dt_tools.console.progress_bar import ProgressBar
 import time
 
 def demo():    
-    console.print()
+    console.print('')
     console.print_line_seperator('ProgressBar Demo', 40)
-    console.print()
+    console.print('')
     
     sleep_time = .15
     pbar = ProgressBar("Demo Progress bar", bar_length=40, max_increments=50, show_elapsed=False)
@@ -20,7 +20,7 @@ def demo():
         pbar.display_progress(incr, f'incr [{incr}]')
         time.sleep(sleep_time)
     
-    console.print()
+    console.print('')
     console.print(f"End of {console.cwrap('ProgressBar', ColorFG.YELLOW)} demo.")
 
 
