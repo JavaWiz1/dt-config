@@ -178,13 +178,25 @@ class ConsoleHelper():
     """
     LAST_CONSOLE_STR: str = None
 
-    def _cursor_attribute(cls, token: _CursorAttribute):
-        cls._output_to_terminal(token.value)
-    cursor_attribute = property(None, _cursor_attribute)
+    @classmethod
+    def cursor_set_attribute(cls, attr: Union[_CursorAttribute, str]):
+        token = attr.value if isinstance(attr, _CursorAttribute) else attr
+        cls._output_to_terminal(token)
 
-    def _cursor_shape(cls, token: CursorShape):
-        cls._output_to_terminal(token.value)
-    cursor_shape = property(None, _cursor_shape)
+    # def _cursor_attribute(cls, token: _CursorAttribute):
+    #     print(f'token: {token}')
+    #     cls._output_to_terminal(token.value)
+    # cursor_attribute = property(None, _cursor_attribute)
+
+    @classmethod
+    def cursor_set_shape(cls, shape: Union[CursorShape, str]):
+        token = shape.value if isinstance(shape, CursorShape) else shape
+        cls._output_to_terminal(token)
+
+    # def _cursor_shape(cls, token: CursorShape):
+    #     print(f'token: {token}')
+    #     cls._output_to_terminal(token.value)
+    # cursor_shape = property(None, _cursor_shape)
     
     @classmethod
     def get_console_size(cls) -> Tuple[int, int]:
@@ -431,11 +443,12 @@ class ConsoleHelper():
         """
         Print msg to console.
 
-        Args:
-            msg (any): Message to print to console.
-            eol (str, optional): End of line character. Defaults to '\n'.
-            as_bytes (bool, optional): Output as bytes. Defaults to False.
-            to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.
+        Arguments:  
+            msg (any): Message to print to console.  
+            eol (str, optional): End of line character. Defaults to '\\n'.  
+            as_bytes (bool, optional): Output as bytes. Defaults to False.  
+            to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.  
+
         """
         cls._output_to_terminal(msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
 
@@ -592,7 +605,7 @@ class ConsoleHelper():
         
         output_str = bytes(token,'utf-8') if as_bytes else token
         if to_stderr:
-            print(output_str, eol=eol, flush=True, file=sys.stderr)
+            print(output_str, end=eol, flush=True, file=sys.stderr)
         else:
             print(output_str, end=eol, flush=True)
         cls.LAST_CONSOLE_STR = token
@@ -709,6 +722,7 @@ class ConsoleInputHelper():
         
         return chk_response
 
+    @classmethod
     def wait_with_bypass(cls, secs: int):
         """
         Pause execution for specified number of seconds.
@@ -720,6 +734,21 @@ class ConsoleInputHelper():
         """
         cls.get_input_with_timeout("", timeout_secs=secs)
 
+    @classmethod
+    def _input_with_timeout_nix(cls,prompt: str, timeout_secs: int, default: str) -> str:
+        # set signal handler for *nix systems
+        LOGGER.trace("_input_with_timeout_nix()")
+        signal.signal(signal.SIGALRM, ConsoleInputHelper._alarm_handler)
+        signal.alarm(timeout_secs) # produce SIGALRM in `timeout` seconds
+
+        response = default
+        try:
+            response = input(prompt)
+        finally:
+            signal.alarm(0) # cancel alarm
+            return response
+
+    @classmethod
     def _input_with_timeout_win(cls, prompt: str, timeout_secs: int,  default: str= None) -> str:
         LOGGER.trace("_input_with_timeout_win()")
         sys.stdout.write(prompt)
@@ -732,11 +761,11 @@ class ConsoleInputHelper():
                 result.append(msvcrt.getwche()) #XXX can it block on multibyte characters?
                 endtime = timer() + timeout_secs  # Reset timer each time a key is pressed.
                 if result[-1] == '\r':   #XXX check what Windows returns here
-                    print()
+                    print('')
                     return ''.join(result[:-1])
             time.sleep(0.04) # just to yield to other processes/threads
         if result:
-            print()
+            print('')
             return ''.join(result)
         elif default:
             print(default)
@@ -745,18 +774,6 @@ class ConsoleInputHelper():
     def _alarm_handler(signum, frame):
         raise TimeoutError('time expired.')
 
-    def _input_with_timeout_nix(prompt: str, timeout_secs: int, default: str) -> str:
-        # set signal handler for *nix systems
-        LOGGER.trace("_input_with_timeout_nix()")
-        signal.signal(signal.SIGALRM, ConsoleInputHelper._alarm_handler)
-        signal.alarm(timeout_secs) # produce SIGALRM in `timeout` seconds
-
-        response = default
-        try:
-            response = input(prompt)
-        finally:
-            signal.alarm(0) # cancel alarm
-            return response
 
 # -------------------------------------------------------------------------------------------
 # Miscellaneous Routines
