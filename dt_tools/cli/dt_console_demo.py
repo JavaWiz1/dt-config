@@ -1,6 +1,7 @@
 import time
 
-import dt_tools.console.console_helper as helper
+import dt_tools.console.console_helper as c_helper
+from dt_tools.os.os_helper import OSHelper
 from dt_tools.console.console_helper import (
     ColorBG,
     ColorFG,
@@ -16,7 +17,7 @@ def console_helper_demo():
     console = ConsoleHelper()
     cih = ConsoleInputHelper()
 
-    helper.enable_ctrl_c_handler()
+    OSHelper.enable_ctrl_c_handler()
 
     wait_seconds = 2
 
@@ -209,13 +210,14 @@ def progress_bar_demo():
 def spinner_demo():
     from dt_tools.console.spinner import Spinner, SpinnerType
 
-    sleep_time = .25
+    sleep_time = .50
     for spinner_type in SpinnerType:
         spinner = Spinner(caption=spinner_type, spinner=spinner_type, show_elapsed=True)
         spinner.start_spinner()
         for cnt in range(1,20):
-            time.sleep(sleep_time)
+            time.sleep(sleep_time/2)
         spinner.stop_spinner()
+        time.sleep(sleep_time)
     print(f"End of {console.cwrap('Spinner',ColorFG.YELLOW)} demo.")
 
 

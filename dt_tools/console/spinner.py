@@ -92,7 +92,7 @@ class Spinner():
 
         self.console.cursor_off()
         self._suffix = caption_suffix
-        self._spinner_thread = threading.Thread(target=self._display_spinner)
+        self._spinner_thread = threading.Thread(target=self._display_spinner, daemon=True)
         self._start_time = dt.now()
         self._elapsed_time = '00:00:00'
         self._spinner_thread.start()

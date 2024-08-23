@@ -632,6 +632,7 @@ class ConsoleInputHelper():
     YES_NO_RESPONSE: Final[List[str]] = ['Y','y', 'N', 'n']
     """Yes/No valid_argument list constant"""
 
+    @classmethod
     def get_input_with_timeout(cls, prompt: str, valid_responses: list = [],  
                                default: str = None, timeout_secs: int = -1, 
                                parms_ok: bool = False) -> Union[str, Tuple[str, list]]:
@@ -760,98 +761,101 @@ class ConsoleInputHelper():
 # -------------------------------------------------------------------------------------------
 # Miscellaneous Routines
 # -------------------------------------------------------------------------------------------
-def pad_r(text: str, length: int, pad_char: str = ' ') -> str:
-    """
-    Pad input text with pad character, return left justified string of specified length.
+# def pad_r(text: str, length: int, pad_char: str = ' ') -> str:
+#     """
+#     Pad input text with pad character, return left justified string of specified length.
 
-    Example::
+#     Example::
     
-        text = pad_r('abc', 10, pad_char='X')
-        print(text) 
-        'abcXXXXXXXX'
+#         text = pad_r('abc', 10, pad_char='X')
+#         print(text) 
+#         'abcXXXXXXXX'
 
-    Arguments:
-        text: Input string to pad.
-        length: Length of resulting string.
+#     Arguments:
+#         text: Input string to pad.
+#         length: Length of resulting string.
 
-    Keyword Arguments:
-        pad_char: String padding character (default: {' '}).
+#     Keyword Arguments:
+#         pad_char: String padding character (default: {' '}).
 
-    Raises:
-        ValueError: Pad character MUST be of length 1.
+#     Raises:
+#         ValueError: Pad character MUST be of length 1.
 
-    Returns:
-        Left justified padded string.
-    """
-    if len(pad_char) > 1:
-        raise ValueError('Padding character should only be 1 character in length')
+#     Returns:
+#         Left justified padded string.
+#     """
+#     if len(pad_char) > 1:
+#         raise ValueError('Padding character should only be 1 character in length')
     
-    pad_len = length - len(text)
-    if pad_len > 0:
-        return f'{text}{pad_char*pad_len}'
-    return text    
+#     pad_len = length - len(text)
+#     if pad_len > 0:
+#         return f'{text}{pad_char*pad_len}'
+#     return text    
 
-def pad_l(text: str, length: int, pad_char: str = ' ') -> str:
-    """
-    Pad input text with pad character, return right-justified string of specified length.
+# def pad_l(text: str, length: int, pad_char: str = ' ') -> str:
+#     """
+#     Pad input text with pad character, return right-justified string of specified length.
 
-        Example::
+#         Example::
     
-            text = pad_l('abc', 10, pad_char='X')
-            print(text) 
-            'XXXXXXXXabc'
+#             text = pad_l('abc', 10, pad_char='X')
+#             print(text) 
+#             'XXXXXXXXabc'
 
-    Arguments:
-        text: Input string to pad.
-        length: Length of resulting string.
+#     Arguments:
+#         text: Input string to pad.
+#         length: Length of resulting string.
 
-    Keyword Arguments:
-        pad_char: String padding character [default: {' '}].
+#     Keyword Arguments:
+#         pad_char: String padding character [default: {' '}].
 
-    Raises:
-        ValueError: Pad character MUST be of length 1.
+#     Raises:
+#         ValueError: Pad character MUST be of length 1.
 
-    Returns:
-        Right justified padded string.
-    """
-    if len(pad_char) > 1:
-        raise ValueError('Padding character should only be 1 character in length')
+#     Returns:
+#         Right justified padded string.
+#     """
+#     if len(pad_char) > 1:
+#         raise ValueError('Padding character should only be 1 character in length')
     
-    pad_len = length - len(text)
-    if pad_len > 0:
-        return f'{pad_char*pad_len}{text}'
-    return text    
+#     pad_len = length - len(text)
+#     if pad_len > 0:
+#         return f'{pad_char*pad_len}{text}'
+#     return text    
 
-def disable_ctrl_c_handler() -> bool:
-    """
-    Disable handler for Ctrl-C checking.
-    """
-    success = True
-    try:
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-    except:  # noqa: E722
-        success = False
-    return success
+# def disable_ctrl_c_handler() -> bool:
+#     """
+#     Disable handler for Ctrl-C checking.
+#     """
+#     success = True
+#     try:
+#         signal.signal(signal.SIGINT, signal.SIG_DFL)
+#     except:  # noqa: E722
+#         success = False
+#     return success
 
-def enable_ctrl_c_handler() -> bool:
-    """
-    Enable handler for Ctrl-C checking.
+# def enable_ctrl_c_handler(handler_function: callable = None) -> bool:
+#     """
+#     Enable handler for Ctrl-C checking.
 
-    If Ctrl-C occurs, user is prompted to continue or exit.
+#     If Ctrl-C occurs, user is prompted to continue or exit.
     
-    Prompt will timeout after 10 seconds and exit.
-    """
-    success = True
-    try:
-        signal.signal(signal.SIGINT, _interrupt_handler)
-    except:  # noqa: E722
-        success = False
-    return success
+#     Prompt will timeout after 10 seconds and exit.
+#     """
+#     success = True
+#     if handler_function is None:
+#         handler_function = _interrupt_handler
 
-def _interrupt_handler(signum, frame):
-    resp = ConsoleInputHelper().get_input_with_timeout('\nCtrl-C, Continue or Exit (c,e)? ',['C','c','E','e'], 'e', 10)
-    if resp.lower() == 'e':
-        os._exit(1)
+#     try:
+#         signal.signal(signal.SIGINT, handler_function)
+#     except:  # noqa: E722
+#         success = False
+#     return success
+
+# def _interrupt_handler(signum, frame):
+#     resp = ConsoleInputHelper().get_input_with_timeout('\nCtrl-C, Continue or Exit (c,e)? ',['C','c','E','e'], 'e', 10)
+#     if resp.lower() == 'e':
+#         os._exit(1)
 
 
 if __name__ == "__main__":
