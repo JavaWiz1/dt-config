@@ -56,10 +56,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ConsoleInputHelper"><code class="docutils literal notranslate"><span class="pre">ConsoleInputHelper</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.CursorShape"><code class="docutils literal notranslate"><span class="pre">CursorShape</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.WindowControl"><code class="docutils literal notranslate"><span class="pre">WindowControl</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.disable_ctrl_c_handler"><code class="docutils literal notranslate"><span class="pre">disable_ctrl_c_handler()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.enable_ctrl_c_handler"><code class="docutils literal notranslate"><span class="pre">enable_ctrl_c_handler()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.pad_l"><code class="docutils literal notranslate"><span class="pre">pad_l()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.pad_r"><code class="docutils literal notranslate"><span class="pre">pad_r()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="dt_tools.console.msgbox.html">dt_tools.console.msgbox module</a></li>
@@ -475,11 +471,6 @@ con.print_at(5, 10, token)</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cursor_attribute">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_attribute</span></span><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cursor_attribute" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cursor_current_position">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_current_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.cursor_current_position"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cursor_current_position" title="Link to this definition"></a></dt>
@@ -590,9 +581,14 @@ con.print_at(5, 10, token)</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cursor_shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_shape</span></span><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cursor_shape" title="Link to this definition"></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cursor_set_attribute">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_set_attribute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_CursorAttribute</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.cursor_set_attribute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cursor_set_attribute" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cursor_set_shape">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cursor_set_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.CursorShape" title="dt_tools.console.console_helper.CursorShape"><span class="pre">CursorShape</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.cursor_set_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cursor_set_shape" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -915,80 +911,6 @@ If True, allows user to provide additional text after the valid response.</p></l
 <span class="sig-name descname"><span class="pre">WINDOW_TITLE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b]2;%title%\x07'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.WindowControl.WINDOW_TITLE" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.disable_ctrl_c_handler">
-<span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">disable_ctrl_c_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#disable_ctrl_c_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.disable_ctrl_c_handler" title="Link to this definition"></a></dt>
-<dd><p>Disable handler for Ctrl-C checking.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.enable_ctrl_c_handler">
-<span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">enable_ctrl_c_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#enable_ctrl_c_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.enable_ctrl_c_handler" title="Link to this definition"></a></dt>
-<dd><p>Enable handler for Ctrl-C checking.</p>
-<p>If Ctrl-C occurs, user is prompted to continue or exit.</p>
-<p>Prompt will timeout after 10 seconds and exit.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.pad_l">
-<span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">pad_l</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_char</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#pad_l"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.pad_l" title="Link to this definition"></a></dt>
-<dd><p>Pad input text with pad character, return right-justified string of specified length.</p>
-<blockquote>
-<div><p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">pad_l</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-<span class="s1">&#39;XXXXXXXXabc&#39;</span>
-</pre></div>
-</div>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> – Input string to pad.</p></li>
-<li><p><strong>length</strong> – Length of resulting string.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>pad_char</strong> – String padding character [default: {’ ‘}].</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Pad character MUST be of length 1.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Right justified padded string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.pad_r">
-<span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">pad_r</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_char</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#pad_r"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.pad_r" title="Link to this definition"></a></dt>
-<dd><p>Pad input text with pad character, return left justified string of specified length.</p>
-<p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">pad_r</span><span class="p">(</span><span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-<span class="s1">&#39;abcXXXXXXXX&#39;</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> – Input string to pad.</p></li>
-<li><p><strong>length</strong> – Length of resulting string.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>pad_char</strong> – String padding character (default: {’ ‘}).</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Pad character MUST be of length 1.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Left justified padded string.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </section>
