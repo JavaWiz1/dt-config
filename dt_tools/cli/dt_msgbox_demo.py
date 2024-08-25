@@ -1,14 +1,13 @@
 from dt_tools.console.console_helper import ColorFG
 from dt_tools.console.console_helper import ConsoleHelper as console
-from dt_tools.console.console_helper import enable_ctrl_c_handler
-
+from dt_tools.os.os_helper import OSHelper
 
 import tkinter as tk
 
 import dt_tools.console.msgbox as msgbox
 
 def demo():
-    enable_ctrl_c_handler()
+    OSHelper.enable_ctrl_c_handler()
 
     console.print('')
     console.print_line_seperator('Alert box (no timeout)', 40)

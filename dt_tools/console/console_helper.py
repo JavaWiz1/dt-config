@@ -41,7 +41,6 @@ if sys.platform == "win32":
 
 class _ConsoleControl:
     """Console control characters."""
-    # ESC: Final  = '\u001b'
     ESC: Final = "\x1B"
     BELL: Final = '\a'
     CEND: Final = f'{ESC}[0m'
@@ -115,10 +114,6 @@ class _CursorAttribute(Enum):
     """Cursor control characters (Visability, Blink?)."""
     HIDE = f'{_ConsoleControl.ESC}[?25l'
     SHOW = f'{_ConsoleControl.ESC}[?25h'
-    # SOLID = f'{_ConsoleControl.ESC}[?12l'
-    # """Solid (non-blinking) Cursor"""
-    # BLINKING = f'{_ConsoleControl.ESC}[?12h' # Does not work (sometimes)?
-    # """Blinking Cursor"""
 
 class _CursorClear:
     EOS: Final = f'{_ConsoleControl.ESC}[0J'
@@ -140,12 +135,12 @@ class WindowControl:
     WINDOW_SHOW: Final  = f'{_ConsoleControl.ESC}[1t'
     WINDOW_TITLE: Final = f'{_ConsoleControl.ESC}]2;%title%\a'
 
-class _FormatControls:
+class TextFmtControls:
     """Constants for formatting strings."""
-    end: Final = f'{_ConsoleControl.ESC}[0m'
-    underline: Final = f'{_ConsoleControl.ESC}[4m'
-    bold: Final = f'{_ConsoleControl.ESC}[1m'
-    spacer: Final = ' ͏'
+    RESET: Final = f'{_ConsoleControl.ESC}[0m'
+    UNDERLINE: Final = f'{_ConsoleControl.ESC}[4m'
+    BOLD: Final = f'{_ConsoleControl.ESC}[1m'
+    SPACER: Final = ' ͏'
 
 
 # https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
@@ -285,15 +280,16 @@ class ConsoleHelper():
                 # print(hex_loc)
                 token = hex_loc.split(';')
                 try:
-                    row = token[0]
-                    col = token[1]
+                    row = int(token[0])
+                    col = int(token[1])
                     valid_coords = True
                 except ValueError as ve:
-                    LOGGER.warning(f'Invalid row/col: {token}')
+                    LOGGER.warning(f'Invalid row/col: {token} - {ve}')
         else:
             row, col = os.popen('stty size', 'r').read().split()
-        
-        return (int(row), int(col))
+            row = int(row)
+            col = int(col)
+        return (row, col)
 
     @classmethod
     def cursor_save_position(cls):
@@ -554,9 +550,11 @@ class ConsoleHelper():
             max_rows, max_cols = cls.get_console_size()
             length = max_cols - col
         fill_len = length - len(cls.remove_nonprintable_characters(text))
-        color_code = cls.color_code(_FormatControls.underline, fg=ColorFG.DEFAULT, bg=ColorBG.DEFAULT)
-        text = text.replace(_FormatControls.end, f'{color_code}')
-        line_out = f'{_FormatControls.underline}{text}{" "*(fill_len-1)}{_FormatControls.spacer}{_FormatControls.end}'
+        if TextFmtControls.RESET in text:
+            color_code = cls.color_code(style=TextFmtControls.UNDERLINE, fg=ColorFG.DEFAULT, bg=ColorBG.DEFAULT)
+            text = text.replace(TextFmtControls.RESET, f'{TextFmtControls.RESET}{color_code}')
+        # cls.print(text, as_bytes=True)
+        line_out = f'{TextFmtControls.UNDERLINE}{text}{" "*(fill_len-1)}{TextFmtControls.RESET}'
         return line_out
 
     @classmethod
@@ -808,5 +806,8 @@ if __name__ == "__main__":
     from dt_tools.console.console_helper import ConsoleHelper, ColorFG
     console = ConsoleHelper()
     console.clear_screen()
+    # console.print_line_seperator(' ', 80)
+    # line = f'You know that {console.cwrap("THIS", style=ColorStyle.ITALIC)} is a test.'
+    # console.print_line_seperator(line, 80)
     demo()
     print("That's all folks!")

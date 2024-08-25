@@ -1,10 +1,9 @@
 from dt_tools.console.console_helper import ColorFG, ColorStyle
 from dt_tools.console.console_helper import ConsoleHelper as console
 from dt_tools.console.console_helper import ConsoleInputHelper as console_input
-from dt_tools.console.console_helper import enable_ctrl_c_handler
-
+from dt_tools.os.os_helper import OSHelper
 def demo():    
-    enable_ctrl_c_handler()
+    OSHelper.enable_ctrl_c_handler()
     timeout = 10
     console.print('')
     console.print_line_seperator('ConsoleInputHelper Demo', 40)
