@@ -22,7 +22,7 @@ Additionally, helper classes/namespaces provided:
 
 """
 
-
+import re
 import os
 import signal
 import sys
@@ -61,6 +61,7 @@ class ColorStyle:
 
 class ColorFG:
     """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
+    DEFAULT: Final = f'{_ConsoleControl.ESC}[39m'
     BLACK: Final  = f'{_ConsoleControl.ESC}[30m'
     RED: Final    = f'{_ConsoleControl.ESC}[31m'
     GREEN: Final  = f'{_ConsoleControl.ESC}[32m'
@@ -81,6 +82,7 @@ class ColorFG:
 
 class ColorBG:
     """Console background font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
+    DEFAULT: Final = f'{_ConsoleControl.ESC}[49m'
     BLACK: Final  = f'{_ConsoleControl.ESC}[40m'
     RED: Final    = f'{_ConsoleControl.ESC}[41m'
     GREEN: Final  = f'{_ConsoleControl.ESC}[42m'
@@ -272,16 +274,22 @@ class ConsoleHelper():
             Cusor location: (row, col).
         """
         if sys.platform == "win32":
-            sys.stdout.write("\x1b[6n")
-            sys.stdout.flush()
-            buffer = bytes()
-            while msvcrt.kbhit():
-                buffer += msvcrt.getch()
-            hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
-            # print(hex_loc)
-            token = hex_loc.split(';')
-            row = token[0]
-            col = token[1]
+            valid_coords = False
+            while not valid_coords:
+                sys.stdout.write("\x1b[6n")
+                sys.stdout.flush()
+                buffer = bytes()
+                while msvcrt.kbhit():
+                    buffer += msvcrt.getch()
+                hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
+                # print(hex_loc)
+                token = hex_loc.split(';')
+                try:
+                    row = token[0]
+                    col = token[1]
+                    valid_coords = True
+                except ValueError as ve:
+                    LOGGER.warning(f'Invalid row/col: {token}')
         else:
             row, col = os.popen('stty size', 'r').read().split()
         
@@ -439,7 +447,8 @@ class ConsoleHelper():
         return True
 
     @classmethod
-    def print(cls, msg, eol='\n', as_bytes:bool = False, to_stderr:bool = False):
+    def print(cls, msg, eol='\n', as_bytes:bool = False, to_stderr:bool = False, 
+              fg: ColorFG = ColorFG.DEFAULT, bg: ColorBG = ColorBG.DEFAULT, style: ColorStyle = ColorStyle.TRANSPARENT):
         """
         Print msg to console.
 
@@ -450,7 +459,8 @@ class ConsoleHelper():
             to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.  
 
         """
-        cls._output_to_terminal(msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
+        out_msg = cls.cwrap(msg, color=fg, bg=bg, style=style)
+        cls._output_to_terminal(out_msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
 
     @classmethod
     def print_at(cls, row: int, col: int, text: str, eol='', as_bytes: bool = False, to_stderr:bool = False) -> bool:
@@ -495,18 +505,6 @@ class ConsoleHelper():
             time.sleep(wait)
 
     @classmethod
-    def print_line_seperator(cls, text: str = '', length: int = -1):
-        """
-        Print line separator at current cursor position.
-
-        Keyword Arguments:
-            text: Text to be displayed within the separator line (default: {''}).
-            length: Lenght of the separator line  (default: {-1}).
-            if < 0, use console width.
-        """
-        print(cls.sprint_line_separator(text, length))
-
-    @classmethod
     def display_status(cls, text, wait: int = 0):
         """
         Display status message on last row of screen.
@@ -527,6 +525,18 @@ class ConsoleHelper():
             time.sleep(wait)
     
     @classmethod
+    def print_line_seperator(cls, text: str = '', length: int = -1):
+        """
+        Print line separator at current cursor position.
+
+        Keyword Arguments:
+            text: Text to be displayed within the separator line (default: {''}).
+            length: Lenght of the separator line  (default: {-1}).
+            if < 0, use console width.
+        """
+        print(cls.sprint_line_separator(text, length))
+
+    @classmethod
     def sprint_line_separator(cls, text: str = '', length: int = -1) -> str:
         """
         Return string underline (seperator) with optional text.
@@ -543,10 +553,27 @@ class ConsoleHelper():
             row, col = cls.cursor_current_position()
             max_rows, max_cols = cls.get_console_size()
             length = max_cols - col
-        fill_len = length - len(text)
+        fill_len = length - len(cls.remove_nonprintable_characters(text))
+        color_code = cls.color_code(_FormatControls.underline, fg=ColorFG.DEFAULT, bg=ColorBG.DEFAULT)
+        text = text.replace(_FormatControls.end, f'{color_code}')
         line_out = f'{_FormatControls.underline}{text}{" "*(fill_len-1)}{_FormatControls.spacer}{_FormatControls.end}'
         return line_out
 
+    @classmethod
+    def remove_nonprintable_characters(cls, text: str) -> str:
+        """
+        Return the length of strings printable characters
+
+        Args:
+            text (str): Input string
+
+        Returns:
+            int: Number of printable characters
+        """
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        result = ansi_escape.sub('', text)    
+        return result
+    
     @classmethod
     def debug_display_cursor_location(cls, msg:str = ""):
         """
@@ -558,7 +585,8 @@ class ConsoleHelper():
         cls.display_status(f'Cursor: {str(ConsoleHelper().cursor_current_position())}  {msg}')
 
     @classmethod
-    def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
+    # def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
+    def cwrap(cls, text: str, color: ColorFG = ColorFG.DEFAULT, bg: ColorBG = ColorBG.DEFAULT, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
         """
         Wrap text with color codes for console display.
         
@@ -566,7 +594,7 @@ class ConsoleHelper():
 
         Arguments:
             **text**: req - String containing text to be colorized.
-            **color**: req -  The FG color OR color string (see console_color())
+            **color**: req -  The FG color OR color string (see ColorFG)
             **colorBG**: opt - The BG color (see ColorBG)
             **style**: opt - The style to be applied (see ColorStyle)
 
@@ -574,7 +602,6 @@ class ConsoleHelper():
             Updated string.
         """
         color_code = ConsoleHelper.color_code(style, color, bg)
-
         return f'{color_code}{text}{_ConsoleControl.CEND}'
 
     @classmethod
@@ -774,105 +801,6 @@ class ConsoleInputHelper():
     def _alarm_handler(signum, frame):
         raise TimeoutError('time expired.')
 
-
-# -------------------------------------------------------------------------------------------
-# Miscellaneous Routines
-# -------------------------------------------------------------------------------------------
-# def pad_r(text: str, length: int, pad_char: str = ' ') -> str:
-#     """
-#     Pad input text with pad character, return left justified string of specified length.
-
-#     Example::
-    
-#         text = pad_r('abc', 10, pad_char='X')
-#         print(text) 
-#         'abcXXXXXXXX'
-
-#     Arguments:
-#         text: Input string to pad.
-#         length: Length of resulting string.
-
-#     Keyword Arguments:
-#         pad_char: String padding character (default: {' '}).
-
-#     Raises:
-#         ValueError: Pad character MUST be of length 1.
-
-#     Returns:
-#         Left justified padded string.
-#     """
-#     if len(pad_char) > 1:
-#         raise ValueError('Padding character should only be 1 character in length')
-    
-#     pad_len = length - len(text)
-#     if pad_len > 0:
-#         return f'{text}{pad_char*pad_len}'
-#     return text    
-
-# def pad_l(text: str, length: int, pad_char: str = ' ') -> str:
-#     """
-#     Pad input text with pad character, return right-justified string of specified length.
-
-#         Example::
-    
-#             text = pad_l('abc', 10, pad_char='X')
-#             print(text) 
-#             'XXXXXXXXabc'
-
-#     Arguments:
-#         text: Input string to pad.
-#         length: Length of resulting string.
-
-#     Keyword Arguments:
-#         pad_char: String padding character [default: {' '}].
-
-#     Raises:
-#         ValueError: Pad character MUST be of length 1.
-
-#     Returns:
-#         Right justified padded string.
-#     """
-#     if len(pad_char) > 1:
-#         raise ValueError('Padding character should only be 1 character in length')
-    
-#     pad_len = length - len(text)
-#     if pad_len > 0:
-#         return f'{pad_char*pad_len}{text}'
-#     return text    
-
-# def disable_ctrl_c_handler() -> bool:
-#     """
-#     Disable handler for Ctrl-C checking.
-#     """
-#     success = True
-#     try:
-#         signal.signal(signal.SIGINT, signal.SIG_DFL)
-#     except:  # noqa: E722
-#         success = False
-#     return success
-
-# def enable_ctrl_c_handler(handler_function: callable = None) -> bool:
-#     """
-#     Enable handler for Ctrl-C checking.
-
-#     If Ctrl-C occurs, user is prompted to continue or exit.
-    
-#     Prompt will timeout after 10 seconds and exit.
-#     """
-#     success = True
-#     if handler_function is None:
-#         handler_function = _interrupt_handler
-
-#     try:
-#         signal.signal(signal.SIGINT, handler_function)
-#     except:  # noqa: E722
-#         success = False
-#     return success
-
-# def _interrupt_handler(signum, frame):
-#     resp = ConsoleInputHelper().get_input_with_timeout('\nCtrl-C, Continue or Exit (c,e)? ',['C','c','E','e'], 'e', 10)
-#     if resp.lower() == 'e':
-#         os._exit(1)
 
 
 if __name__ == "__main__":
