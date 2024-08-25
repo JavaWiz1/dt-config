@@ -51,10 +51,10 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">dt_tools.console.console_helper module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG"><code class="docutils literal notranslate"><span class="pre">ColorBG</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG"><code class="docutils literal notranslate"><span class="pre">ColorFG</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle"><code class="docutils literal notranslate"><span class="pre">ColorStyle</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ConsoleHelper"><code class="docutils literal notranslate"><span class="pre">ConsoleHelper</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.ConsoleInputHelper"><code class="docutils literal notranslate"><span class="pre">ConsoleInputHelper</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.CursorShape"><code class="docutils literal notranslate"><span class="pre">CursorShape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle"><code class="docutils literal notranslate"><span class="pre">TextStyle</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dt_tools.console.console_helper.WindowControl"><code class="docutils literal notranslate"><span class="pre">WindowControl</span></code></a></li>
 </ul>
 </li>
@@ -155,6 +155,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorBG.DEFAULT">
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[49m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorBG.DEFAULT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorBG.GREEN">
 <span class="sig-name descname"><span class="pre">GREEN</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[42m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorBG.GREEN" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -242,6 +247,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorFG.DEFAULT">
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[39m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorFG.DEFAULT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorFG.GREEN">
 <span class="sig-name descname"><span class="pre">GREEN</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[32m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorFG.GREEN" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -294,63 +304,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorFG.YELLOW2">
 <span class="sig-name descname"><span class="pre">YELLOW2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[93m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorFG.YELLOW2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">ColorStyle</span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ColorStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Console Color styles</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.BLINK">
-<span class="sig-name descname"><span class="pre">BLINK</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[5m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.BLINK" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.BLINK2">
-<span class="sig-name descname"><span class="pre">BLINK2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[6m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.BLINK2" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.BOLD">
-<span class="sig-name descname"><span class="pre">BOLD</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[1m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.BOLD" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.DIM">
-<span class="sig-name descname"><span class="pre">DIM</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[2m]'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.DIM" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.HIDDEN">
-<span class="sig-name descname"><span class="pre">HIDDEN</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[8m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.HIDDEN" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.ITALIC">
-<span class="sig-name descname"><span class="pre">ITALIC</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[3m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.ITALIC" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.SELECTED">
-<span class="sig-name descname"><span class="pre">SELECTED</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[7m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.SELECTED" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.STRIKETHRU">
-<span class="sig-name descname"><span class="pre">STRIKETHRU</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[9m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.STRIKETHRU" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.TRANSPARENT">
-<span class="sig-name descname"><span class="pre">TRANSPARENT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.TRANSPARENT" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="dt_tools.console.console_helper.ColorStyle.URL">
-<span class="sig-name descname"><span class="pre">URL</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[4m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.ColorStyle.URL" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -428,13 +381,13 @@ con.print_at(5, 10, token)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.color_code">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">color_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle" title="dt_tools.console.console_helper.ColorStyle"><span class="pre">ColorStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[0m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.color_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.color_code" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">color_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle" title="dt_tools.console.console_helper.TextStyle"><span class="pre">TextStyle</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle" title="dt_tools.console.console_helper.TextStyle"><span class="pre">TextStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[0m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.color_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.color_code" title="Link to this definition"></a></dt>
 <dd><p>Create ANSI color code for style, fg color and bg color</p>
 <p>If any parameter (style, fg or bg) is None, current value will be used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>**style**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle" title="dt_tools.console.console_helper.ColorStyle"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorStyle</span></code></a>, optional): Font style (ie. bold, italic,…).</p></li>
+<li><p><strong>**style**</strong> – (<code class="xref py py-class docutils literal notranslate"><span class="pre">TextStyleControls</span></code>, optional): Font style (ie. bold, italic,…).</p></li>
 <li><p><strong>**fg**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorFG</span></code></a>, optional): Foreground text color.</p></li>
 <li><p><strong>**bg**</strong> – (<a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorBG</span></code></a>, optional): Background color.</p></li>
 </ul>
@@ -604,16 +557,16 @@ con.print_at(5, 10, token)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.cwrap">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorStyle" title="dt_tools.console.console_helper.ColorStyle"><span class="pre">ColorStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[0m'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.cwrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cwrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle" title="dt_tools.console.console_helper.TextStyle"><span class="pre">TextStyle</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle" title="dt_tools.console.console_helper.TextStyle"><span class="pre">TextStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.cwrap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.cwrap" title="Link to this definition"></a></dt>
 <dd><p>Wrap text with color codes for console display.</p>
 <p>See ConsoleFG, ConsoleBG and ConsoleStyle for control codes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>**text**</strong> – req - String containing text to be colorized.</p></li>
-<li><p><strong>**color**</strong> – req -  The FG color OR color string (see console_color())</p></li>
-<li><p><strong>**colorBG**</strong> – opt - The BG color (see ColorBG)</p></li>
-<li><p><strong>**style**</strong> – opt - The style to be applied (see ColorStyle)</p></li>
+<li><p><strong>**fg**</strong> – req -  The FG color OR color string (see ColorFG)</p></li>
+<li><p><strong>**bg**</strong> – opt - The BG color (see ColorBG)</p></li>
+<li><p><strong>**style**</strong> – opt - The style to be applied (see TextStyleControls)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -635,7 +588,7 @@ con.print_at(5, 10, token)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.display_status">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.display_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.display_status" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_eyecatcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.display_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.display_status" title="Link to this definition"></a></dt>
 <dd><p>Display status message on last row of screen.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -660,14 +613,14 @@ con.print_at(5, 10, token)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.print">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_stderr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.print" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_stderr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorFG" title="dt_tools.console.console_helper.ColorFG"><span class="pre">ColorFG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[39m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.ColorBG" title="dt_tools.console.console_helper.ColorBG"><span class="pre">ColorBG</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[49m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dt_tools.console.console_helper.TextStyle" title="dt_tools.console.console_helper.TextStyle"><span class="pre">TextStyle</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\x1b[0m'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.print"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.print" title="Link to this definition"></a></dt>
 <dd><p>Print msg to console.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg</strong> (<em>any</em>) – Message to print to console.</p></li>
 <li><p><strong>eol</strong> (<em>str</em><em>, </em><em>optional</em>) – End of line character. Defaults to ‘n’.</p></li>
-<li><p><strong>as_bytes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Output as bytes. Defaults to False.</p></li>
+<li><p><strong>as_bytes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Output as bytes (ie. raw string). Defaults to False.</p></li>
 <li><p><strong>to_stderr</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print to stderr (instead of stdout). Defaults to False.</p></li>
 </ul>
 </dd>
@@ -728,6 +681,23 @@ con.print_at(5, 10, token)</p>
 <li><p><strong>wait</strong> – Number of seconds to wait (default: {0.0}).</p></li>
 <li><p><strong>eol</strong> – EndOfLine character (default: {’n’}).</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.ConsoleHelper.remove_nonprintable_characters">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remove_nonprintable_characters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#ConsoleHelper.remove_nonprintable_characters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.ConsoleHelper.remove_nonprintable_characters" title="Link to this definition"></a></dt>
+<dd><p>Return the length of strings printable characters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – Input string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of printable characters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -887,6 +857,78 @@ If True, allows user to provide additional text after the valid response.</p></l
 <dl class="py attribute">
 <dt class="sig sig-object py" id="dt_tools.console.console_helper.CursorShape.STEADY_UNDERLINE">
 <span class="sig-name descname"><span class="pre">STEADY_UNDERLINE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[4</span> <span class="pre">q'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.CursorShape.STEADY_UNDERLINE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dt_tools.console.console_helper.</span></span><span class="sig-name descname"><span class="pre">TextStyle</span></span><a class="reference internal" href="_modules/dt_tools/console/console_helper.html#TextStyle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Constants for formatting strings.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.BLINK">
+<span class="sig-name descname"><span class="pre">BLINK</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[5m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.BLINK" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.BLINK2">
+<span class="sig-name descname"><span class="pre">BLINK2</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[6m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.BLINK2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.BOLD">
+<span class="sig-name descname"><span class="pre">BOLD</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[1m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.BOLD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.DIM">
+<span class="sig-name descname"><span class="pre">DIM</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[2m]'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.DIM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.HIDDEN">
+<span class="sig-name descname"><span class="pre">HIDDEN</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[8m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.HIDDEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.INVERSE">
+<span class="sig-name descname"><span class="pre">INVERSE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[k'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.INVERSE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.ITALIC">
+<span class="sig-name descname"><span class="pre">ITALIC</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[3m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.ITALIC" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.RESET">
+<span class="sig-name descname"><span class="pre">RESET</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.RESET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.SELECTED">
+<span class="sig-name descname"><span class="pre">SELECTED</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[7m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.SELECTED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.SPACER">
+<span class="sig-name descname"><span class="pre">SPACER</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'</span> <span class="pre">͏'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.SPACER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.STRIKETHRU">
+<span class="sig-name descname"><span class="pre">STRIKETHRU</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[9m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.STRIKETHRU" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.TRANSPARENT">
+<span class="sig-name descname"><span class="pre">TRANSPARENT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[0m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.TRANSPARENT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dt_tools.console.console_helper.TextStyle.UNDERLINE">
+<span class="sig-name descname"><span class="pre">UNDERLINE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Final</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\x1b[4m'</span></em><a class="headerlink" href="#dt_tools.console.console_helper.TextStyle.UNDERLINE" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -45,18 +45,35 @@ class _ConsoleControl:
     BELL: Final = '\a'
     CEND: Final = f'{ESC}[0m'
 
-class ColorStyle:
-    """Console Color styles"""
+# class TextStyle:
+#     """Console Color styles"""
+    # TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
+    # BOLD: Final       = f'{_ConsoleControl.ESC}[1m'
+    # DIM: Final        = f'{_ConsoleControl.ESC}[2m]'
+    # ITALIC: Final     = f'{_ConsoleControl.ESC}[3m'
+    # URL: Final        = f'{_ConsoleControl.ESC}[4m'
+    # BLINK: Final      = f'{_ConsoleControl.ESC}[5m'
+    # BLINK2: Final     = f'{_ConsoleControl.ESC}[6m'
+    # SELECTED: Final   = f'{_ConsoleControl.ESC}[7m'
+    # HIDDEN: Final     = f'{_ConsoleControl.ESC}[8m'
+    # STRIKETHRU: Final = f'{_ConsoleControl.ESC}[9m'
+
+class TextStyle:
+    """Constants for formatting strings."""
     TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
-    BOLD: Final       = f'{_ConsoleControl.ESC}[1m'
-    DIM: Final        = f'{_ConsoleControl.ESC}[2m]'
-    ITALIC: Final     = f'{_ConsoleControl.ESC}[3m'
-    URL: Final        = f'{_ConsoleControl.ESC}[4m'
-    BLINK: Final      = f'{_ConsoleControl.ESC}[5m'
-    BLINK2: Final     = f'{_ConsoleControl.ESC}[6m'
-    SELECTED: Final   = f'{_ConsoleControl.ESC}[7m'
-    HIDDEN: Final     = f'{_ConsoleControl.ESC}[8m'
-    STRIKETHRU: Final = f'{_ConsoleControl.ESC}[9m'
+    RESET: Final       = f'{_ConsoleControl.ESC}[0m'
+    BOLD: Final        = f'{_ConsoleControl.ESC}[1m'
+    DIM: Final         = f'{_ConsoleControl.ESC}[2m]'
+    ITALIC: Final      = f'{_ConsoleControl.ESC}[3m'
+    UNDERLINE: Final   = f'{_ConsoleControl.ESC}[4m'
+    BLINK: Final       = f'{_ConsoleControl.ESC}[5m'
+    BLINK2: Final      = f'{_ConsoleControl.ESC}[6m'
+    SELECTED: Final    = f'{_ConsoleControl.ESC}[7m'
+    HIDDEN: Final      = f'{_ConsoleControl.ESC}[8m'
+    STRIKETHRU: Final  = f'{_ConsoleControl.ESC}[9m'
+    INVERSE: Final     = f'{_ConsoleControl.ESC}[k'
+    SPACER: Final      = ' ͏'
+
 
 class ColorFG:
     """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
@@ -134,13 +151,6 @@ class WindowControl:
     WINDOW_HIDE: Final  = f'{_ConsoleControl.ESC}[2t'
     WINDOW_SHOW: Final  = f'{_ConsoleControl.ESC}[1t'
     WINDOW_TITLE: Final = f'{_ConsoleControl.ESC}]2;%title%\a'
-
-class TextFmtControls:
-    """Constants for formatting strings."""
-    RESET: Final = f'{_ConsoleControl.ESC}[0m'
-    UNDERLINE: Final = f'{_ConsoleControl.ESC}[4m'
-    BOLD: Final = f'{_ConsoleControl.ESC}[1m'
-    SPACER: Final = ' ͏'
 
 
 # https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
@@ -444,18 +454,18 @@ class ConsoleHelper():
 
     @classmethod
     def print(cls, msg, eol='\n', as_bytes:bool = False, to_stderr:bool = False, 
-              fg: ColorFG = ColorFG.DEFAULT, bg: ColorBG = ColorBG.DEFAULT, style: ColorStyle = ColorStyle.TRANSPARENT):
+              fg: ColorFG = ColorFG.DEFAULT, bg: ColorBG = ColorBG.DEFAULT, style: TextStyle = TextStyle.TRANSPARENT):
         """
         Print msg to console.
 
         Arguments:  
             msg (any): Message to print to console.  
             eol (str, optional): End of line character. Defaults to '\\n'.  
-            as_bytes (bool, optional): Output as bytes. Defaults to False.  
+            as_bytes (bool, optional): Output as bytes (ie. raw string). Defaults to False.  
             to_stderr (bool, optional): Print to stderr (instead of stdout). Defaults to False.  
 
         """
-        out_msg = cls.cwrap(msg, color=fg, bg=bg, style=style)
+        out_msg = cls.cwrap(msg, fg=fg, bg=bg, style=style)
         cls._output_to_terminal(out_msg, eol=eol, as_bytes=as_bytes, to_stderr=to_stderr)
 
     @classmethod
@@ -501,7 +511,7 @@ class ConsoleHelper():
             time.sleep(wait)
 
     @classmethod
-    def display_status(cls, text, wait: int = 0):
+    def display_status(cls, text, wait: int = 0, status_eyecatcher: bool = True):
         """
         Display status message on last row of screen.
 
@@ -514,9 +524,16 @@ class ConsoleHelper():
         max_row, max_col = cls.get_console_size()
 
         save_row, save_col = cls.cursor_current_position()
+        if status_eyecatcher:
+            eyecatcher_style = f'{ColorBG.GREY}{ColorFG.BLACK}'
+            # inverse_token = f'{eyecatcher_style}{TextStyle.INVERSE}'
+            text = f'{eyecatcher_style}{text.replace(TextStyle.RESET, f"{TextStyle.RESET}{eyecatcher_style}")}'
+            # cls.print(text, as_bytes=True)
+            
         cls.print_at(max_row, 1, f'{text}', eol='')     
         cls.clear_to_EOL()
-        cls.cursor_move(save_row, save_col)   
+        cls.print_at(1, 1, TextStyle.RESET)   
+        cls.cursor_move(save_row, save_col)
         if wait > 0:
             time.sleep(wait)
     
@@ -550,11 +567,11 @@ class ConsoleHelper():
             max_rows, max_cols = cls.get_console_size()
             length = max_cols - col
         fill_len = length - len(cls.remove_nonprintable_characters(text))
-        if TextFmtControls.RESET in text:
-            color_code = cls.color_code(style=TextFmtControls.UNDERLINE, fg=ColorFG.DEFAULT, bg=ColorBG.DEFAULT)
-            text = text.replace(TextFmtControls.RESET, f'{TextFmtControls.RESET}{color_code}')
+        if TextStyle.RESET in text:
+            color_code = cls.color_code(style=TextStyle.UNDERLINE, fg=ColorFG.DEFAULT, bg=ColorBG.DEFAULT)
+            text = text.replace(TextStyle.RESET, f'{TextStyle.RESET}{color_code}')
         # cls.print(text, as_bytes=True)
-        line_out = f'{TextFmtControls.UNDERLINE}{text}{" "*(fill_len-1)}{TextFmtControls.RESET}'
+        line_out = f'{TextStyle.UNDERLINE}{text}{" "*(fill_len-1)}{TextStyle.RESET}'
         return line_out
 
     @classmethod
@@ -583,8 +600,8 @@ class ConsoleHelper():
         cls.display_status(f'Cursor: {str(ConsoleHelper().cursor_current_position())}  {msg}')
 
     @classmethod
-    # def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
-    def cwrap(cls, text: str, color: ColorFG = ColorFG.DEFAULT, bg: ColorBG = ColorBG.DEFAULT, style: ColorStyle = ColorStyle.TRANSPARENT) -> str:
+    # def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: TextStyleControls = TextStyleControls.TRANSPARENT) -> str:
+    def cwrap(cls, text: str, fg: ColorFG = None, bg: ColorBG = None, style: Union[List[TextStyle],TextStyle] = None) -> str:
         """
         Wrap text with color codes for console display.
         
@@ -592,18 +609,30 @@ class ConsoleHelper():
 
         Arguments:
             **text**: req - String containing text to be colorized.
-            **color**: req -  The FG color OR color string (see ColorFG)
-            **colorBG**: opt - The BG color (see ColorBG)
-            **style**: opt - The style to be applied (see ColorStyle)
+            **fg**: req -  The FG color OR color string (see ColorFG)
+            **bg**: opt - The BG color (see ColorBG)
+            **style**: opt - The style to be applied (see TextStyleControls)
 
         Returns:
             Updated string.
         """
-        color_code = ConsoleHelper.color_code(style, color, bg)
+        color_code = ''
+        if fg and bg and style:
+            color_code = ConsoleHelper.color_code(style, fg, bg)
+        else:
+            if fg:
+                color_code += fg
+            if bg:
+                color_code += bg
+            if style:
+                if isinstance(style, list):
+                   style = ''.join(style) 
+                color_code += style
+
         return f'{color_code}{text}{_ConsoleControl.CEND}'
 
     @classmethod
-    def color_code(cls, style: ColorStyle = ColorStyle.TRANSPARENT, fg: ColorFG = None, bg: ColorBG= None) -> str:
+    def color_code(cls, style: Union[List[TextStyle], TextStyle] = TextStyle.TRANSPARENT, fg: ColorFG = None, bg: ColorBG= None) -> str:
         """
         Create ANSI color code for style, fg color and bg color
 
@@ -611,7 +640,7 @@ class ConsoleHelper():
 
         Args:
             
-            **style**: (:class:`~ColorStyle`, optional): Font style (ie. bold, italic,...).  
+            **style**: (:class:`~TextStyleControls`, optional): Font style (ie. bold, italic,...).  
             **fg**: (:class:`~ColorFG`, optional): Foreground text color.  
             **bg**: (:class:`~ColorBG`, optional): Background color.  
 
@@ -619,6 +648,9 @@ class ConsoleHelper():
             str: The ANSI code representing the desired ANSI atributes.
             
         """
+        codes = []
+        if isinstance(style, list):
+            style = ''.join(style)
         codes = [str(style), str(fg), str(bg)]
         format = ';'.join([x.removeprefix(f'{_ConsoleControl.ESC}[').removesuffix('m') for x in codes if x != 'None'])
         code = f'{_ConsoleControl.ESC}[{format}m'
@@ -806,8 +838,14 @@ if __name__ == "__main__":
     from dt_tools.console.console_helper import ConsoleHelper, ColorFG
     console = ConsoleHelper()
     console.clear_screen()
+    # console.display_status('Test no colors', 3)
+    # console.display_status(f"Test {console.cwrap('Yellow', fg=ColorFG.YELLOW)} colors", 3)
+    # console.display_status(f"Test {console.cwrap('Yellow', fg=ColorFG.YELLOW, style=TextStyle.ITALIC)} colors", 3)
+    # console.display_status(f"Test {console.cwrap('Blue', fg=ColorFG.BLUE2, style=[TextStyle.ITALIC, TextStyle.BOLD])} colors", 3)
+
     # console.print_line_seperator(' ', 80)
-    # line = f'You know that {console.cwrap("THIS", style=ColorStyle.ITALIC)} is a test.'
+    # line = f'You know that {console.cwrap("THIS", style=TextStyleControls.ITALIC)} is a test.'
     # console.print_line_seperator(line, 80)
+
     demo()
     print("That's all folks!")

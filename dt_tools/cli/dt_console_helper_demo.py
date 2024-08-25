@@ -1,4 +1,4 @@
-from dt_tools.console.console_helper import ColorBG, ColorFG, ColorStyle, _CursorAttribute, CursorShape
+from dt_tools.console.console_helper import ColorBG, ColorFG, TextStyle, _CursorAttribute, CursorShape
 from dt_tools.console.console_helper import ConsoleHelper as console
 from dt_tools.console.console_helper import ConsoleInputHelper as console_input
 from dt_tools.os.os_helper import OSHelper
@@ -17,13 +17,13 @@ def demo():
     console.cursor_save_position()
 
     console.print_line_seperator('Test color attributes', 40)
-    token = console.cwrap('string', color=ColorFG.RED, bg=ColorBG.WHITE, style=ColorStyle.ITALIC)
+    token = console.cwrap('string', fg=ColorFG.RED, bg=ColorBG.WHITE, style=TextStyle.ITALIC)
     console.print(f'This {token} is Red Italic on White BG')
-    console.print(f'This {token} is Red Italic on White BG', as_bytes=True)
+    console.print(f'RAW: This {token} is Red Italic on White BG', as_bytes=True)
     print(f'This {console.cwrap("string", ColorFG.GREEN)} is Green')
     print(f'This {console.cwrap("string", ColorFG.RED)} is Red')
-    print(f'This {console.cwrap("string", ColorFG.RED, None, ColorStyle.ITALIC)} is Italic Red')
-    print(f'This {console.cwrap("string", ColorFG.RED, None, ColorStyle.BOLD)} is Bold Red\n')
+    print(f'This {console.cwrap("string", ColorFG.RED, None, TextStyle.ITALIC)} is Italic Red')
+    print(f'This {console.cwrap("string", ColorFG.RED, None, TextStyle.BOLD)} is Bold Red\n')
     console_input.get_input_with_timeout('Press ENTER to continue ', timeout_secs=10)
     
     console.cursor_restore_position()
@@ -56,7 +56,7 @@ def demo():
 
     console.cursor_set_shape(CursorShape.STEADY_BLOCK)            
     console.display_status('Test Rows...')
-    for row in range(1, console_size[0]+1):
+    for row in range(1, console_size[0]):
         console.print_at(row, 60, f'Row {row}', eol='')
     console.cursor_move(row=1,column=1)
     console.print_with_wait(f'Console size: {console_size} and current position: {row},{col}', wait_seconds)
@@ -96,12 +96,12 @@ def demo():
     time.sleep(wait_seconds)
 
     console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
-    console.set_console_viewport(2,console_size[0]-1)
 
     console.clear_screen()
+    console.set_console_viewport(start_row=2, end_row=console_size[0]-1)
     console.print_line_seperator('Check scrolling...', 40)
     for row in range(1, 50):
-        print(f'Row {row}')    
+        console.print(f'Row {row}')    
         if row % 5 == 0:
             console.debug_display_cursor_location('Scrolling...')
             time.sleep(.5)

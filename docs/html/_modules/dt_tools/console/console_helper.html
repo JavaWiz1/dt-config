@@ -118,9 +118,9 @@
     <span class="n">BELL</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\a</span><span class="s1">&#39;</span>
     <span class="n">CEND</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[0m&#39;</span>
 
-<div class="viewcode-block" id="ColorStyle">
-<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ColorStyle">[docs]</a>
-<span class="k">class</span> <span class="nc">ColorStyle</span><span class="p">:</span>
+<div class="viewcode-block" id="TextStyle">
+<a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.TextStyle">[docs]</a>
+<span class="k">class</span> <span class="nc">TextStyle</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Console Color styles&quot;&quot;&quot;</span>
     <span class="n">BOLD</span><span class="p">:</span> <span class="n">Final</span>     <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[1m&#39;</span>
     <span class="n">ITALIC</span><span class="p">:</span> <span class="n">Final</span>   <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_ConsoleControl</span><span class="o">.</span><span class="n">ESC</span><span class="si">}</span><span class="s1">[3m&#39;</span>
@@ -676,7 +676,7 @@
 
 <div class="viewcode-block" id="ConsoleHelper.cwrap">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.cwrap">[docs]</a>
-    <span class="k">def</span> <span class="nf">cwrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ColorFG</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">colorBG</span><span class="p">:</span> <span class="n">ColorBG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">ColorStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">cwrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ColorFG</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">colorBG</span><span class="p">:</span> <span class="n">ColorBG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">TextStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Wrap text with color codes for console display.</span>
 <span class="sd">        </span>
@@ -686,7 +686,7 @@
 <span class="sd">            **text**: req - String containing text to be colorized.</span>
 <span class="sd">            **color**: req -  The FG color OR color string (see console_color())</span>
 <span class="sd">            **colorBG**: opt - The BG color (see ColorBG)</span>
-<span class="sd">            **style**: opt - The style to be applied (see ColorStyle)</span>
+<span class="sd">            **style**: opt - The style to be applied (see TextStyle)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Updated string.</span>
@@ -699,7 +699,7 @@
 
 <div class="viewcode-block" id="ConsoleHelper.color_code">
 <a class="viewcode-back" href="../../../dt_tools.console.console_helper.html#dt_tools.console.console_helper.ConsoleHelper.color_code">[docs]</a>
-    <span class="k">def</span> <span class="nf">color_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">ColorStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="p">:</span> <span class="n">ColorFG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bg</span><span class="p">:</span> <span class="n">ColorBG</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">color_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">TextStyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="p">:</span> <span class="n">ColorFG</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bg</span><span class="p">:</span> <span class="n">ColorBG</span><span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create ANSI color code for style, fg color and bg color</span>
 
@@ -707,7 +707,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            </span>
-<span class="sd">            **style**: (:class:`~ColorStyle`, optional): Font style (ie. bold, italic,...).  </span>
+<span class="sd">            **style**: (:class:`~TextStyle`, optional): Font style (ie. bold, italic,...).  </span>
 <span class="sd">            **fg**: (:class:`~ColorFG`, optional): Foreground text color.  </span>
 <span class="sd">            **bg**: (:class:`~ColorBG`, optional): Background color.  </span>
 
