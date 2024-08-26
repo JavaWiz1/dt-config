@@ -278,9 +278,12 @@ class ConsoleHelper():
         Returns:
             Cusor location: (row, col).
         """
+        row = -1
+        col = -1
         if sys.platform == "win32":
             valid_coords = False
-            while not valid_coords:
+            val_errcnt = 0
+            while not valid_coords and val_errcnt < 3:
                 sys.stdout.write("\x1b[6n")
                 sys.stdout.flush()
                 buffer = bytes()
@@ -294,11 +297,13 @@ class ConsoleHelper():
                     col = int(token[1])
                     valid_coords = True
                 except ValueError as ve:
-                    LOGGER.warning(f'Invalid row/col: {token} - {ve}')
+                    val_errcnt += 1
+                    LOGGER.debug(f'cursor_current_postion()-Invalid row/col: {hex_loc} | {token} - {ve}')
         else:
             row, col = os.popen('stty size', 'r').read().split()
             row = int(row)
             col = int(col)
+            
         return (row, col)
 
     @classmethod
@@ -664,7 +669,11 @@ class ConsoleHelper():
         if to_stderr:
             print(output_str, end=eol, flush=True, file=sys.stderr)
         else:
-            print(output_str, end=eol, flush=True)
+            try:
+                print(output_str, end=eol, flush=True)
+            except UnicodeEncodeError:
+                # stderr will escape non-printable characters
+                print(output_str, end=eol, flush=True, file=sys.stderr)
         cls.LAST_CONSOLE_STR = token
 
     @classmethod
