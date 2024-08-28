@@ -58,22 +58,6 @@ class _ConsoleControl:
     # HIDDEN: Final     = f'{_ConsoleControl.ESC}[8m'
     # STRIKETHRU: Final = f'{_ConsoleControl.ESC}[9m'
 
-class TextStyle:
-    """Constants for formatting strings."""
-    TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
-    RESET: Final       = f'{_ConsoleControl.ESC}[0m'
-    BOLD: Final        = f'{_ConsoleControl.ESC}[1m'
-    DIM: Final         = f'{_ConsoleControl.ESC}[2m]'
-    ITALIC: Final      = f'{_ConsoleControl.ESC}[3m'
-    UNDERLINE: Final   = f'{_ConsoleControl.ESC}[4m'
-    BLINK: Final       = f'{_ConsoleControl.ESC}[5m'
-    BLINK2: Final      = f'{_ConsoleControl.ESC}[6m'
-    SELECTED: Final    = f'{_ConsoleControl.ESC}[7m'
-    HIDDEN: Final      = f'{_ConsoleControl.ESC}[8m'
-    STRIKETHRU: Final  = f'{_ConsoleControl.ESC}[9m'
-    INVERSE: Final     = f'{_ConsoleControl.ESC}[k'
-    SPACER: Final      = ' ͏'
-
 
 class ColorFG:
     """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
@@ -116,6 +100,22 @@ class ColorBG:
     VIOLET2: Final = f'{_ConsoleControl.ESC}[105m'
     BEIGE2: Final  = f'{_ConsoleControl.ESC}[106m'
     WHITE2: Final  = f'{_ConsoleControl.ESC}[107m'
+
+class TextStyle:
+    """Constants for formatting strings."""
+    TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
+    RESET: Final       = f'{_ConsoleControl.ESC}[0m'
+    BOLD: Final        = f'{_ConsoleControl.ESC}[1m'
+    DIM: Final         = f'{_ConsoleControl.ESC}[2m]'
+    ITALIC: Final      = f'{_ConsoleControl.ESC}[3m'
+    UNDERLINE: Final   = f'{_ConsoleControl.ESC}[4m'
+    BLINK: Final       = f'{_ConsoleControl.ESC}[5m'
+    BLINK2: Final      = f'{_ConsoleControl.ESC}[6m'
+    SELECTED: Final    = f'{_ConsoleControl.ESC}[7m'
+    HIDDEN: Final      = f'{_ConsoleControl.ESC}[8m'
+    STRIKETHRU: Final  = f'{_ConsoleControl.ESC}[9m'
+    INVERSE: Final     = f'{_ConsoleControl.ESC}[k'
+    SPACER: Final      = ' ͏'
 
 class CursorShape(Enum):
     """Constants defining available cursor shapes."""

@@ -4,9 +4,9 @@ This module will demo the dt_tools.console.spinner capabilities including:
 - Spinner with and without elapsed time
 - Showcase different spinner types
 
-
 To run this demo standalone:
-    `poetry run python -m dt_tools.cli.dt_spinner_demo
+    `poetry run python -m dt_tools.cli.dt_spinner_demo`
+
 """
 import time
 
