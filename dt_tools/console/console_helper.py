@@ -352,9 +352,19 @@ class ConsoleHelper():
         cls._output_to_terminal(_CursorClear.BOS)
 
     @classmethod
-    def clear_line(cls):
-        """Clear current line"""
+    def clear_line(cls, row_offset: int = 0):
+        """
+        Clear console line, and position cursor at beginning of line.
+
+        Args:
+            row_offset (int, optional): Offset of line to clear. Defaults to 0.
+        """
+        if row_offset < 0:
+            cls.cursor_up(abs(row_offset))
+        elif row_offset > 0:
+            cls.cursor_down(row_offset)
         cls._output_to_terminal(_CursorClear.LINE)
+        cls.cursor_move(-1, 1)
 
     @classmethod
     def clear_to_EOL(cls):
@@ -543,7 +553,7 @@ class ConsoleHelper():
             time.sleep(wait)
     
     @classmethod
-    def print_line_seperator(cls, text: str = '', length: int = -1):
+    def print_line_separator(cls, text: str = '', length: int = -1):
         """
         Print line separator at current cursor position.
 
@@ -557,7 +567,7 @@ class ConsoleHelper():
     @classmethod
     def sprint_line_separator(cls, text: str = '', length: int = -1) -> str:
         """
-        Return string underline (seperator) with optional text.
+        Return string underline (separator) with optional text.
 
         Keyword Arguments:
             text: Text to be displayed within the separator line (default: {''}).
@@ -852,9 +862,9 @@ if __name__ == "__main__":
     # console.display_status(f"Test {console.cwrap('Yellow', fg=ColorFG.YELLOW, style=TextStyle.ITALIC)} colors", 3)
     # console.display_status(f"Test {console.cwrap('Blue', fg=ColorFG.BLUE2, style=[TextStyle.ITALIC, TextStyle.BOLD])} colors", 3)
 
-    # console.print_line_seperator(' ', 80)
+    # console.print_line_separator(' ', 80)
     # line = f'You know that {console.cwrap("THIS", style=TextStyleControls.ITALIC)} is a test.'
-    # console.print_line_seperator(line, 80)
+    # console.print_line_separator(line, 80)
 
     demo()
     print("That's all folks!")

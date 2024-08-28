@@ -1,3 +1,11 @@
+"""
+This module will demo the dt_tools.console.console_helper capabilities including:
+
+- cursor positioning (move to, print at, ...)
+- console clearing (screen, line, to EOL, to BOL,...)
+- setting FG and BG colors, wrapping words with color, ...
+
+"""
 from dt_tools.console.console_helper import ColorBG, ColorFG, TextStyle, _CursorAttribute, CursorShape
 from dt_tools.console.console_helper import ConsoleHelper as console
 from dt_tools.console.console_helper import ConsoleInputHelper as console_input
@@ -16,7 +24,7 @@ def demo():
     console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
     console.cursor_save_position()
 
-    console.print_line_seperator('Test color attributes', 40)
+    console.print_line_separator('Test color attributes', 40)
     token = console.cwrap('string', fg=ColorFG.RED, bg=ColorBG.WHITE, style=TextStyle.ITALIC)
     console.print(f'This {token} is Red Italic on White BG')
     console.print(f'RAW: This {token} is Red Italic on White BG', as_bytes=True)
@@ -29,7 +37,7 @@ def demo():
     console.cursor_restore_position()
     console.clear_to_EOS()
 
-    console.print_line_seperator('Test cursor attributes', 40)
+    console.print_line_separator('Test cursor attributes', 40)
     for attr in _CursorAttribute:
         console.debug_display_cursor_location()
         console.print_with_wait(f'CURSOR: {attr}', eol=' ')
@@ -42,7 +50,7 @@ def demo():
     console.cursor_restore_position()
     console.clear_to_EOS()
 
-    console.print_line_seperator('Test cursor shape...', 40)
+    console.print_line_separator('Test cursor shape...', 40)
     for shape in CursorShape:
         console.debug_display_cursor_location()
         console.cursor_set_shape(shape)
@@ -99,7 +107,7 @@ def demo():
 
     console.clear_screen()
     console.set_console_viewport(start_row=2, end_row=console_size[0]-1)
-    console.print_line_seperator('Check scrolling...', 40)
+    console.print_line_separator('Check scrolling...', 40)
     for row in range(1, 50):
         console.print(f'Row {row}')    
         if row % 5 == 0:
@@ -109,7 +117,7 @@ def demo():
 
     console.set_console_viewport()
     console.clear_screen()
-    console.print_line_seperator('Display color palette, codes are [style,fg,bg]...', 40)
+    console.print_line_separator('Display color palette, codes are [style,fg,bg]...', 40)
     console.print('')
     time.sleep(wait_seconds)
     console._display_color_palette()
