@@ -190,21 +190,11 @@ class ConsoleHelper():
         token = attr.value if isinstance(attr, _CursorAttribute) else attr
         cls._output_to_terminal(token)
 
-    # def _cursor_attribute(cls, token: _CursorAttribute):
-    #     print(f'token: {token}')
-    #     cls._output_to_terminal(token.value)
-    # cursor_attribute = property(None, _cursor_attribute)
-
     @classmethod
     def cursor_set_shape(cls, shape: Union[CursorShape, str]):
         token = shape.value if isinstance(shape, CursorShape) else shape
         cls._output_to_terminal(token)
 
-    # def _cursor_shape(cls, token: CursorShape):
-    #     print(f'token: {token}')
-    #     cls._output_to_terminal(token.value)
-    # cursor_shape = property(None, _cursor_shape)
-    
     @classmethod
     def get_console_size(cls) -> Tuple[int, int]:
         """
@@ -213,12 +203,9 @@ class ConsoleHelper():
         Returns:
             Size as (rows, columns).
         """
-        rows = int(os.getenv('LINES', -1))
-        columns = int(os.getenv('COLUMNS', -1))
-        if rows <= 0 or columns <= 0:
-            size = os.get_terminal_size()
-            rows = int(size.lines)
-            columns = int(size.columns)
+        size = os.get_terminal_size()
+        rows = int(size.lines)
+        columns = int(size.columns)
 
         return (rows, columns)
 
@@ -537,10 +524,10 @@ class ConsoleHelper():
             wait: Number of seconds to wait/pause (default: {0}).
         """
         max_row, max_col = cls.get_console_size()
-
+    
         save_row, save_col = cls.cursor_current_position()
         if status_eyecatcher:
-            eyecatcher_style = f'{ColorBG.GREY}{ColorFG.BLACK}'
+            eyecatcher_style = f'{ColorBG.GREY}{ColorFG.WHITE2}'
             # inverse_token = f'{eyecatcher_style}{TextStyle.INVERSE}'
             text = f'{eyecatcher_style}{text.replace(TextStyle.RESET, f"{TextStyle.RESET}{eyecatcher_style}")}'
             # cls.print(text, as_bytes=True)
@@ -855,16 +842,5 @@ class ConsoleInputHelper():
 if __name__ == "__main__":
     from dt_tools.cli.dt_console_demo import console_helper_demo as demo
     from dt_tools.console.console_helper import ConsoleHelper, ColorFG
-    console = ConsoleHelper()
-    console.clear_screen()
-    # console.display_status('Test no colors', 3)
-    # console.display_status(f"Test {console.cwrap('Yellow', fg=ColorFG.YELLOW)} colors", 3)
-    # console.display_status(f"Test {console.cwrap('Yellow', fg=ColorFG.YELLOW, style=TextStyle.ITALIC)} colors", 3)
-    # console.display_status(f"Test {console.cwrap('Blue', fg=ColorFG.BLUE2, style=[TextStyle.ITALIC, TextStyle.BOLD])} colors", 3)
-
-    # console.print_line_separator(' ', 80)
-    # line = f'You know that {console.cwrap("THIS", style=TextStyleControls.ITALIC)} is a test.'
-    # console.print_line_separator(line, 80)
-
     demo()
     print("That's all folks!")

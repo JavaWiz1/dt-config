@@ -18,8 +18,8 @@ def demo():
 
     console.cursor_set_shape(CursorShape.BLINKING_UNDERLINE)
     console.clear_screen(cursor_home=True)
-    console_size = console.get_console_size()
     row, col = console.cursor_current_position()
+    console_size = console.get_console_size()
     console.set_console_viewport(1,console_size[0]-1)
     console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
     console.cursor_save_position()
@@ -69,8 +69,8 @@ def demo():
     console.cursor_move(row=1,column=1)
     console.print_with_wait(f'Console size: {console_size} and current position: {row},{col}', wait_seconds)
     console.cursor_move(5,1)
-    print(f'Look at the beautiful {console.cwrap("blue",ColorFG.BLUE)} sky')
-    console.debug_display_cursor_location(f'After {console.cwrap("blue",ColorFG.BLUE)} sky')
+    print(f'Look at the beautiful {console.cwrap("blue",ColorFG.BLUE2, style=TextStyle.BOLD)} sky')
+    console.debug_display_cursor_location(f'After {console.cwrap("blue",ColorFG.BLUE2, style=TextStyle.BOLD)} sky')
     time.sleep(wait_seconds)
 
     print('Check cursor positioning...')
@@ -80,7 +80,7 @@ def demo():
     console.cursor_left(7)
 
     console.clear_to_EOL()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOL',ColorFG.GREEN)}")
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOL',ColorFG.GREEN2, style=TextStyle.BOLD)}")
     time.sleep(wait_seconds)
 
     print('abc', end='')
@@ -88,11 +88,11 @@ def demo():
     time.sleep(wait_seconds)
 
     console.clear_to_BOL()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOL',ColorFG.GREEN)}")
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOL',ColorFG.GREEN2, style=TextStyle.BOLD)}")
     time.sleep(wait_seconds)
 
     console.clear_to_BOS()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOS',ColorFG.GREEN)}")
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('BOS',ColorFG.GREEN2, style=TextStyle.BOLD)}")
     time.sleep(wait_seconds)
 
     console.cursor_move(12,1)
@@ -100,7 +100,7 @@ def demo():
     time.sleep(wait_seconds)
 
     console.clear_to_EOS()
-    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOS',ColorFG.GREEN)}")
+    console.debug_display_cursor_location(f"Clear to {console.cwrap('EOS',ColorFG.GREEN2, style=TextStyle.BOLD)}")
     time.sleep(wait_seconds)
 
     console.print_with_wait(f'Console size: {console_size}, cur pos: {row},{col}', wait_seconds, eol='\n\n')
