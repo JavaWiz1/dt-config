@@ -9,5 +9,4 @@ Subpackages
 .. toctree::
    :maxdepth: 5
 
-   dt_tools.cli
    dt_tools.console

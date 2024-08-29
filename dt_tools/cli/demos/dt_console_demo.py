@@ -48,5 +48,7 @@ def run_demos():
             demo_func()
             console.print('')
 
+    console.print('Console demo complete!')
+    
 if __name__ == '__main__':
     run_demos()

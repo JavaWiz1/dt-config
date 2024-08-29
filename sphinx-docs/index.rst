@@ -6,13 +6,19 @@
 dt-console documentation
 ========================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+This package provides a number of tools for developing console applications.
+
+Features include:
+
+- Console naviation, text colors and fonts, cursor types, ...
+- Input prompt helper, timeout, input validation...
+- GUI Message boxes (Alert, Prompt, Password,...)
+- Console feedback controls (Progress Bar, Spinner)
 
 
 .. toctree::
    :maxdepth: 5
+   :titlesonly:
    :caption: Contents:
 
-   dt_tools
+   dt_tools.console
