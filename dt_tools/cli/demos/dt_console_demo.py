@@ -15,11 +15,11 @@ To Run:
 
 """
 import dt_tools.logger.logging_helper as lh
-from dt_tools.cli.dt_console_helper_demo import demo as console_helper_demo
-from dt_tools.cli.dt_console_input_helper_demo import demo as console_input_helper_demo
-from dt_tools.cli.dt_msgbox_demo import demo as message_box_demo
-from dt_tools.cli.dt_progress_bar_demo import demo as progress_bar_demo
-from dt_tools.cli.dt_spinner_demo import demo as spinner_demo
+from dt_tools.cli.demos.dt_console_helper_demo import demo as console_helper_demo
+from dt_tools.cli.demos.dt_console_input_helper_demo import demo as console_input_helper_demo
+from dt_tools.cli.demos.dt_msgbox_demo import demo as message_box_demo
+from dt_tools.cli.demos.dt_progress_bar_demo import demo as progress_bar_demo
+from dt_tools.cli.demos.dt_spinner_demo import demo as spinner_demo
 from dt_tools.console.console_helper import ColorFG, TextStyle
 from dt_tools.console.console_helper import ConsoleHelper as console
 from dt_tools.console.console_helper import ConsoleInputHelper as console_input
