@@ -17,6 +17,7 @@ Features include:
     <li><b>Spinner</b> - Display visual progress on screen via configuable spinner control</li>
 </ul>
 
+Package donumentation can be found [here](https://htmlpreview.github.io/?https://github.com/JavaWiz1/dt-console/blob/develop/docs/html/index.html).
 
 ## Installation
 
