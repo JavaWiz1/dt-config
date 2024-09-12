@@ -39,15 +39,13 @@ def demo():
     
     console.print('')
     console.print_line_separator('Alert box (multi-line)', 40)
-    msgbox._used_font_family = msgbox.MB_FontFamily.MONOSPACE
-    msgbox._used_font_size = msgbox.MB_FontSize.MONOSPACE
+    msgbox.set_font(msgbox.MB_FontFamily.MONOSPACE, msgbox.MB_FontSize.MONOSPACE)
     resp = msgbox.alert(txt,"ALERT-MULTILINE (no timeout)")
     console.print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     
     console.print('')
     console.print_line_separator('Confirmation box (no timeout)', 40)
-    msgbox._used_font_family = msgbox.MB_FontFamily.PROPORTIONAL
-    msgbox._used_font_size = msgbox.MB_FontSize.PROPORTIONAL
+    msgbox.set_font(msgbox.MB_FontFamily.PROPORTIONAL, msgbox.MB_FontSize.PROPORTIONAL)
     resp = msgbox.confirm('this is a confirm box, no timeout', "CONFIRM")
     console.print(f'  returns: {console.cwrap(resp, ColorFG.GREEN)}')
     

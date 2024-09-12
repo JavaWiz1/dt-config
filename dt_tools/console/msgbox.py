@@ -15,7 +15,7 @@ Features:
 """
 import tkinter as tk
 from typing import List, Tuple, Union
-
+from enum import Enum
 from loguru import logger as LOGGER
 
 # This version derived from the below projects:
@@ -64,11 +64,12 @@ class MB_FontFamily:
     PROPORTIONAL = ("MS", "Sans", "Serif")
     MONOSPACE = "Courier"
 
-class MB_FontSize:
+class MB_FontSize(Enum):
     """Font sizes for MsgBox fonts"""
-    PROPORTIONAL = 10
-    MONOSPACE = (9)  # a little smaller, because it it more legible at a smaller size
-    TEXT = 12        # a little larger makes it easier to see
+    DEFAULT:int = -1
+    PROPORTIONAL:int = 10
+    MONOSPACE:int = 9  # a little smaller, because it it more legible at a smaller size
+    TEXT:int = 12        # a little larger makes it easier to see
 
 
 MSGBOX_WIDTH = 400
@@ -93,7 +94,7 @@ TIMEOUT_RETURN_VALUE = "Timeout"
 
 # Initialize some global variables that will be reset later
 _used_font_family = MB_FontFamily.PROPORTIONAL
-_used_font_size = MB_FontSize.PROPORTIONAL
+_used_font_size = MB_FontSize.PROPORTIONAL.value
 __choiceboxMultipleSelect = None
 __widgetTexts = None
 __replyButtonText = None
@@ -109,7 +110,8 @@ boxRoot = None
 buttonsFrame = None
 
 
-def set_font(family: MB_FontFamily, size: int=0):
+def set_font(family: MB_FontFamily, size: MB_FontSize = MB_FontSize.DEFAULT):
+    global _used_font_family, _used_font_size
     """Set font family and font size
 
     Arguments:
@@ -119,10 +121,10 @@ def set_font(family: MB_FontFamily, size: int=0):
           on select family. 
     """
     _used_font_family = family
-    if size <= 0:
-        _used_font_size = MB_FontSize.MONOSPACE if _used_font_family == MB_FontFamily.MONOSPACE else MB_FontFamily.PROPORTIONAL
+    if size.value <= MB_FontSize.DEFAULT.value:
+        _used_font_size = MB_FontSize.MONOSPACE.value if _used_font_family == MB_FontFamily.MONOSPACE else MB_FontSize.PROPORTIONAL.value
     else:
-        _used_font_size = size
+        _used_font_size = size.value
 
 
 def _alertTkinter(text="", title="", button=MB_ButtonType.OK, root=None, timeout=None):
@@ -437,7 +439,7 @@ def __fillablebox(msg, title="", default="", mask=None, root=None, timeout=None)
     entryWidget = tk.Entry(entryFrame, width=40)
     _bindArrows(entryWidget, skipArrowKeys=True)
     # entryWidget.configure(font=(MB_FontFamily.PROPORTIONAL, TEXT_ENTRY_FONT_SIZE))
-    entryWidget.configure(font=(_used_font_family, MB_FontSize.TEXT))
+    entryWidget.configure(font=(_used_font_family, MB_FontSize.TEXT.value))
     if mask:
         entryWidget.configure(show=mask)
     entryWidget.pack(side=tk.LEFT, padx="3m")
@@ -521,7 +523,7 @@ def __enterboxCancel(event):
 if __name__ == "__main__":
     alert('This is an alert box', 'ALERT1')
     _used_font_family = MB_FontFamily.MONOSPACE
-    _used_font_size = MB_FontSize.MONOSPACE
+    _used_font_size = MB_FontSize.MONOSPACE.value
 
     # MSGBOX_WIDTH = 600
     txt = ''

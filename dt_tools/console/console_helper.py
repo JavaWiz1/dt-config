@@ -22,8 +22,8 @@ Additionally, helper classes/namespaces provided:
 
 """
 
-import re
 import os
+import re
 import signal
 import sys
 import time
@@ -31,6 +31,8 @@ from enum import Enum
 from typing import Final, List, Tuple, Union
 
 from loguru import logger as LOGGER
+
+from dt_tools.misc.helpers import StringHelper
 
 if sys.platform == "win32":
     import msvcrt
@@ -44,20 +46,6 @@ class _ConsoleControl:
     ESC: Final = "\x1B"
     BELL: Final = '\a'
     CEND: Final = f'{ESC}[0m'
-
-# class TextStyle:
-#     """Console Color styles"""
-    # TRANSPARENT: Final = f'{_ConsoleControl.ESC}[0m' 
-    # BOLD: Final       = f'{_ConsoleControl.ESC}[1m'
-    # DIM: Final        = f'{_ConsoleControl.ESC}[2m]'
-    # ITALIC: Final     = f'{_ConsoleControl.ESC}[3m'
-    # URL: Final        = f'{_ConsoleControl.ESC}[4m'
-    # BLINK: Final      = f'{_ConsoleControl.ESC}[5m'
-    # BLINK2: Final     = f'{_ConsoleControl.ESC}[6m'
-    # SELECTED: Final   = f'{_ConsoleControl.ESC}[7m'
-    # HIDDEN: Final     = f'{_ConsoleControl.ESC}[8m'
-    # STRIKETHRU: Final = f'{_ConsoleControl.ESC}[9m'
-
 
 class ColorFG:
     """ Console font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
@@ -83,14 +71,14 @@ class ColorFG:
 class ColorBG:
     """Console background font colors to be used with :func:`~dt_tools.console.console_helper.ConsoleHelper.cwrap()`."""
     DEFAULT: Final = f'{_ConsoleControl.ESC}[49m'
-    BLACK: Final  = f'{_ConsoleControl.ESC}[40m'
-    RED: Final    = f'{_ConsoleControl.ESC}[41m'
-    GREEN: Final  = f'{_ConsoleControl.ESC}[42m'
-    YELLOW: Final = f'{_ConsoleControl.ESC}[43m'
-    BLUE: Final   = f'{_ConsoleControl.ESC}[44m'
-    VIOLET: Final = f'{_ConsoleControl.ESC}[45m'
-    BEIGE: Final  = f'{_ConsoleControl.ESC}[46m'
-    WHITE: Final  = f'{_ConsoleControl.ESC}[47m'
+    BLACK: Final   = f'{_ConsoleControl.ESC}[40m'
+    RED: Final     = f'{_ConsoleControl.ESC}[41m'
+    GREEN: Final   = f'{_ConsoleControl.ESC}[42m'
+    YELLOW: Final  = f'{_ConsoleControl.ESC}[43m'
+    BLUE: Final    = f'{_ConsoleControl.ESC}[44m'
+    VIOLET: Final  = f'{_ConsoleControl.ESC}[45m'
+    BEIGE: Final   = f'{_ConsoleControl.ESC}[46m'
+    WHITE: Final   = f'{_ConsoleControl.ESC}[47m'
 
     GREY: Final    = f'{_ConsoleControl.ESC}[100m'
     RED2: Final    = f'{_ConsoleControl.ESC}[101m'
@@ -119,13 +107,13 @@ class TextStyle:
 
 class CursorShape(Enum):
     """Constants defining available cursor shapes."""
-    DEFAULT = f'{_ConsoleControl.ESC}[0 q'
-    BLINKING_BLOCK = f'{_ConsoleControl.ESC}[1 q'
-    STEADY_BLOCK = f'{_ConsoleControl.ESC}[2 q'
-    BLINKING_UNDERLINE = f'{_ConsoleControl.ESC}[3 q'
-    STEADY_UNDERLINE = f'{_ConsoleControl.ESC}[4 q'
-    BLINKING_BAR = f'{_ConsoleControl.ESC}[5 q'
-    STEADY_BAR = f'{_ConsoleControl.ESC}[6 q'
+    DEFAULT             = f'{_ConsoleControl.ESC}[0 q'
+    BLINKING_BLOCK      = f'{_ConsoleControl.ESC}[1 q'
+    STEADY_BLOCK        = f'{_ConsoleControl.ESC}[2 q'
+    BLINKING_UNDERLINE  = f'{_ConsoleControl.ESC}[3 q'
+    STEADY_UNDERLINE    = f'{_ConsoleControl.ESC}[4 q'
+    BLINKING_BAR        = f'{_ConsoleControl.ESC}[5 q'
+    STEADY_BAR          = f'{_ConsoleControl.ESC}[6 q'
 
 class _CursorAttribute(Enum):
     """Cursor control characters (Visability, Blink?)."""
@@ -602,9 +590,8 @@ class ConsoleHelper():
         cls.display_status(f'Cursor: {str(ConsoleHelper().cursor_current_position())}  {msg}')
 
     @classmethod
-    # def cwrap(cls, text: str, color: Union[ColorFG, str], bg: ColorBG = None, style: TextStyleControls = TextStyleControls.TRANSPARENT) -> str:
-    def cwrap(cls, text: str, fg: ColorFG = None, bg: ColorBG = None, style: Union[List[TextStyle],TextStyle] = None) -> str:
-        """
+    def cwrap(cls, text: str, fg: ColorFG = None, bg: ColorBG = None, style: Union[List[TextStyle],TextStyle] = None, length: int = -1) -> str:
+        """ 
         Wrap text with color codes for console display.
         
         See ConsoleFG, ConsoleBG and ConsoleStyle for control codes
@@ -614,10 +601,14 @@ class ConsoleHelper():
             **fg**: req -  The FG color OR color string (see ColorFG)
             **bg**: opt - The BG color (see ColorBG)
             **style**: opt - The style to be applied (see TextStyleControls)
+            **length**" opt - Length of string. Pad right with spaces, -1 = len(text).
 
         Returns:
             Updated string.
         """
+        if length < 0:
+            length = len(text)
+
         color_code = ''
         if fg and bg and style:
             color_code = ConsoleHelper.color_code(style, fg, bg)
@@ -631,7 +622,11 @@ class ConsoleHelper():
                    style = ''.join(style) 
                 color_code += style
 
-        return f'{color_code}{text}{_ConsoleControl.CEND}'
+        padded_str = StringHelper.pad_r(text, length)
+        ret_str =  f'{color_code}{padded_str}{_ConsoleControl.CEND}'
+        # cls._output_to_terminal(ret_str, eol='\n', as_bytes=True)
+        return ret_str
+    
 
     @classmethod
     def color_code(cls, style: Union[List[TextStyle], TextStyle] = TextStyle.TRANSPARENT, fg: ColorFG = None, bg: ColorBG= None) -> str:
@@ -840,7 +835,11 @@ class ConsoleInputHelper():
 
 
 if __name__ == "__main__":
-    from dt_tools.cli.dt_console_demo import console_helper_demo as demo
-    from dt_tools.console.console_helper import ConsoleHelper, ColorFG
+    from dt_tools.cli.demos.dt_console_demo import console_helper_demo as demo
+    from dt_tools.console.console_helper import ColorFG, ConsoleHelper
     demo()
+    # print("ConsoleHelper.cwrap('This is a test', style=TextStyle.UNDERLINE, length=30)")
+    # token = ConsoleHelper.cwrap('This is a test', style=TextStyle.UNDERLINE, length=30)
+    # token2 = ConsoleHelper.remove_nonprintable_characters(token)
+    # print(token)
     print("That's all folks!")
