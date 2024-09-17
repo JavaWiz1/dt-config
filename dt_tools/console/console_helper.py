@@ -30,11 +30,11 @@ import time
 from enum import Enum
 from typing import Final, List, Tuple, Union
 
+from dt_tools.misc.helpers import StringHelper
+from dt_tools.os.os_helper import OSHelper
 from loguru import logger as LOGGER
 
-from dt_tools.misc.helpers import StringHelper
-
-if sys.platform == "win32":
+if OSHelper.is_windows():
     import msvcrt
     from ctypes import byref, windll, wintypes  # noqa: F401
 
@@ -255,7 +255,7 @@ class ConsoleHelper():
         """
         row = -1
         col = -1
-        if sys.platform == "win32":
+        if OSHelper.is_windows():
             valid_coords = False
             val_errcnt = 0
             while not valid_coords and val_errcnt < 3:
@@ -750,7 +750,7 @@ class ConsoleInputHelper():
                 response = input(prompt)
             else:
                 try:
-                    if sys.platform == "win32":
+                    if OSHelper.is_windows():
                         response = cls._input_with_timeout_win(prompt, timeout_secs, default)
                     else:
                         response = cls._input_with_timeout_nix(prompt, timeout_secs, default)
