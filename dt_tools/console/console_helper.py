@@ -273,7 +273,8 @@ class ConsoleHelper():
                     valid_coords = True
                 except ValueError as ve:
                     val_errcnt += 1
-                    LOGGER.debug(f'cursor_current_postion()-Invalid row/col: {hex_loc} | {token} - {ve}')
+                    if val_errcnt == 3:
+                        LOGGER.debug(f'cursor_current_postion()-Invalid row/col (hex_loc): {hex_loc} | {token} - {ve}')
         else:
             row, col = os.popen('stty size', 'r').read().split()
             row = int(row)
