@@ -92,16 +92,18 @@ class ProgressBar():
         self.console.cursor_off()
         self._finished = False
 
-        cur_percent = 100 * (current_increment / self._max_increments)
-        dsply_percent = ("{0:5." + str(self._decimals) + "f}").format(cur_percent)
-        filled_len = int(self._bar_len * current_increment // self._max_increments)
-        bar = self._fill * filled_len + '-' * (self._bar_len - filled_len)
-        token = f'\r{self._caption} [{bar}] {dsply_percent}% {suffix}'
-        self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
-        if self._show_elapsed:
-            token = f'{token} {self._elapsed_time}'
-        terminal_line = (token[:self._max_line_length-7] + '...' + token[-3:]) if len(token) > self._max_line_length else token
-        print(terminal_line, end = self._str_end, flush=True)
+        if ConsoleHelper.valid_console(): 
+            cur_percent = 100 * (current_increment / self._max_increments)
+            dsply_percent = ("{0:5." + str(self._decimals) + "f}").format(cur_percent)
+            filled_len = int(self._bar_len * current_increment // self._max_increments)
+            bar = self._fill * filled_len + '-' * (self._bar_len - filled_len)
+            token = f'\r{self._caption} [{bar}] {dsply_percent}% {suffix}'
+            self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
+            if self._show_elapsed:
+                token = f'{token} {self._elapsed_time}'
+            terminal_line = (token[:self._max_line_length-7] + '...' + token[-3:]) if len(token) > self._max_line_length else token
+            print(terminal_line, end = self._str_end, flush=True)
+
         if current_increment >= self._max_increments:
             self.cancel_progress()
 

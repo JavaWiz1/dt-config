@@ -191,12 +191,23 @@ class ConsoleHelper():
         Returns:
             Size as (rows, columns).
         """
-        size = os.get_terminal_size()
-        rows = int(size.lines)
-        columns = int(size.columns)
-
+        try:
+            size = os.get_terminal_size()
+            rows = int(size.lines)
+            columns = int(size.columns)
+        except OSError:
+            rows = 0
+            columns = 0
         return (rows, columns)
 
+    @classmethod
+    def valid_console(cls) -> bool:
+        try:
+            _ = os.get_terminal_size()
+            return True
+        except OSError:
+            return False
+        
     @classmethod
     def console_hide(cls):
         """Minimize console/terminal window"""

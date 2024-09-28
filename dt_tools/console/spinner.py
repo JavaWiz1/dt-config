@@ -91,11 +91,12 @@ class Spinner():
                 self.stop_spinner()
 
         ConsoleHelper.cursor_off()
-        self._suffix = caption_suffix
-        self._spinner_thread = threading.Thread(target=self._display_spinner, daemon=True)
-        self._start_time = dt.now()
-        self._elapsed_time = '00:00:00'
-        self._spinner_thread.start()
+        if ConsoleHelper.valid_console():
+            self._suffix = caption_suffix
+            self._spinner_thread = threading.Thread(target=self._display_spinner, daemon=True)
+            self._start_time = dt.now()
+            self._elapsed_time = '00:00:00'
+            self._spinner_thread.start()
     
     def stop_spinner(self):
         """
@@ -133,18 +134,6 @@ class Spinner():
         """
         return self._elapsed_time
 
-    # def _calculate_suffix(self) -> str:
-    #     suffix = self._suffix
-    #     if suffix != self._last_suffix:
-    #         suffix_len = len(suffix)
-    #         last_suffix_len = len(self._last_suffix)
-    #         self._last_suffix = suffix
-    #         if suffix_len < last_suffix_len:
-    #             space_len = last_suffix_len - suffix_len
-    #             suffix = f'{self._suffix}{" "*space_len}'
-    #             # print(f'|{suffix}|')
-
-    #     return suffix
 
     def _calculate_elapsed_time(self, end_time: float, start_time: float) -> str:
         diff = end_time - start_time
