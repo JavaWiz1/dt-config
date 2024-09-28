@@ -105,7 +105,7 @@ class Spinner():
         Spinner line will be cleared and cursor will be positioned 
         in column 1 of that row
         """
-        if self._spinner_thread.is_alive():
+        if self._spinner_thread is not None and self._spinner_thread.is_alive():
             self._finished = True
             self._spinner_thread.join()
             self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)

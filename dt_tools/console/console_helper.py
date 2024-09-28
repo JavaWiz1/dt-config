@@ -618,6 +618,9 @@ class ConsoleHelper():
         Returns:
             Updated string.
         """
+        if not isinstance(text, str):
+            text = str(text)
+            
         if length < 0:
             length = len(text)
 
