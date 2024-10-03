@@ -21,8 +21,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-dt-misc = "*"
-# dt-misc = {path = "../dt-misc", develop = true }
+dt-foundation = "*"
+# dt-foundation = {path = "../dt-foundation", develop = true }
 
 [[tool.poetry.source]]
 name = "PyPI"

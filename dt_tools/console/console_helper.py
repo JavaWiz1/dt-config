@@ -606,8 +606,9 @@ class ConsoleHelper():
         Returns:
             Updated string.
         """
+        w_text = str(text)
         if length < 0:
-            length = len(text)
+            length = len(w_text)
 
         color_code = ''
         if fg and bg and style:
@@ -622,7 +623,7 @@ class ConsoleHelper():
                    style = ''.join(style) 
                 color_code += style
 
-        padded_str = StringHelper.pad_r(text, length)
+        padded_str = StringHelper.pad_r(w_text, length)
         ret_str =  f'{color_code}{padded_str}{_ConsoleControl.CEND}'
         # cls._output_to_terminal(ret_str, eol='\n', as_bytes=True)
         return ret_str
