@@ -30,11 +30,11 @@ import time
 from enum import Enum
 from typing import Final, List, Tuple, Union
 
+from dt_tools.misc.helpers import StringHelper
+from dt_tools.os.os_helper import OSHelper
 from loguru import logger as LOGGER
 
-from dt_tools.misc.helpers import StringHelper
-
-if sys.platform == "win32":
+if OSHelper.is_windows():
     import msvcrt
     from ctypes import byref, windll, wintypes  # noqa: F401
 
@@ -191,12 +191,23 @@ class ConsoleHelper():
         Returns:
             Size as (rows, columns).
         """
-        size = os.get_terminal_size()
-        rows = int(size.lines)
-        columns = int(size.columns)
-
+        try:
+            size = os.get_terminal_size()
+            rows = int(size.lines)
+            columns = int(size.columns)
+        except OSError:
+            rows = 0
+            columns = 0
         return (rows, columns)
 
+    @classmethod
+    def valid_console(cls) -> bool:
+        try:
+            _ = os.get_terminal_size()
+            return True
+        except OSError:
+            return False
+        
     @classmethod
     def console_hide(cls):
         """Minimize console/terminal window"""
@@ -255,7 +266,7 @@ class ConsoleHelper():
         """
         row = -1
         col = -1
-        if sys.platform == "win32":
+        if OSHelper.is_windows():
             valid_coords = False
             val_errcnt = 0
             while not valid_coords and val_errcnt < 3:
@@ -273,7 +284,8 @@ class ConsoleHelper():
                     valid_coords = True
                 except ValueError as ve:
                     val_errcnt += 1
-                    LOGGER.debug(f'cursor_current_postion()-Invalid row/col: {hex_loc} | {token} - {ve}')
+                    if val_errcnt == 3:
+                        LOGGER.debug(f'cursor_current_postion()-Invalid row/col (hex_loc): {hex_loc} | {token} - {ve}')
         else:
             row, col = os.popen('stty size', 'r').read().split()
             row = int(row)
@@ -750,7 +762,7 @@ class ConsoleInputHelper():
                 response = input(prompt)
             else:
                 try:
-                    if sys.platform == "win32":
+                    if OSHelper.is_windows():
                         response = cls._input_with_timeout_win(prompt, timeout_secs, default)
                     else:
                         response = cls._input_with_timeout_nix(prompt, timeout_secs, default)
