@@ -172,7 +172,7 @@ class ConsoleHelper():
         
     """
     LAST_CONSOLE_STR: str = None
-
+    
     @classmethod
     def cursor_set_attribute(cls, attr: Union[_CursorAttribute, str]):
         token = attr.value if isinstance(attr, _CursorAttribute) else attr
@@ -669,7 +669,7 @@ class ConsoleHelper():
     # == Private Function ================================================================================= 
     @classmethod   
     def _output_to_terminal(cls, token: str, eol:str='', as_bytes: bool = False, to_stderr: bool = False):
-        
+    
         output_str = bytes(token,'utf-8') if as_bytes else token
         if to_stderr:
             print(output_str, end=eol, flush=True, file=sys.stderr)
