@@ -32,7 +32,7 @@ class ProgressBar():
     Displays progress bar in the console.  
     """
 
-    def __init__(self, caption: str, bar_length: int, max_increments: int, fill= '█', str_end = "\r", show_elapsed: bool = False):
+    def __init__(self, caption: str, bar_length: int, max_increments: int, fill= '█', str_end = "\r", show_elapsed: bool = False, show_pct: bool = True):
         """
         Progress bar class instantiation
 
@@ -45,7 +45,7 @@ class ProgressBar():
             fill -- Progress fill character (default: {'█'})
             str_end -- End of progress bar string. default is progress remains fixed location (default: {"\r"})
             show_elapsed -- Append elapsed time at end of progress bar (default: {False})
-
+            show_pct -- Append pct complete at end of progress bar (default: {True})
         Note:
             To update progress, call display_progress(inc) method to indicate current increment count.  
             When inc varible reaches max_increments value, progress bar will terminate.
@@ -60,15 +60,24 @@ class ProgressBar():
             p_bar.cancel_progress()
 
         """
+        _, max_bar_len = ConsoleHelper.get_console_size()
+        max_bar_len -= len(caption)
+        if show_elapsed:
+            max_bar_len -= 8  # len of elapsed str
+        if show_pct:
+            max_bar_len -= 5  # len of pct str
+
         self._caption = caption
+        self._bar_len = min(max_bar_len, bar_length)
         self._max_increments = max_increments
-        self._decimals = 1
         self._fill = fill
         self._str_end = str_end
-        self._bar_len = bar_length
-        self._started = False
         self._show_elapsed = show_elapsed
+        self._show_pct: bool = show_pct
+        
         self._start_time = dt.now()
+        self._decimals = 1
+        self._started = False
         self._elapsed_time = '00:00:00'
         self._finished = False
         self._max_line_length = os.get_terminal_size().columns
@@ -94,10 +103,11 @@ class ProgressBar():
 
         if ConsoleHelper.valid_console(): 
             cur_percent = 100 * (current_increment / self._max_increments)
-            dsply_percent = ("{0:5." + str(self._decimals) + "f}").format(cur_percent)
+            dsply_percent = f'{cur_percent:5.1f}%' if self._show_pct else ''
+            # dsply_percent = ("{0:5." + str(self._decimals) + "f}").format(cur_percent) if self._show_pct else ''
             filled_len = int(self._bar_len * current_increment // self._max_increments)
             bar = self._fill * filled_len + '-' * (self._bar_len - filled_len)
-            token = f'\r{self._caption} [{bar}] {dsply_percent}% {suffix}'
+            token = f'\r{self._caption} [{bar}] {dsply_percent} {suffix}'
             self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
             if self._show_elapsed:
                 token = f'{token} {self._elapsed_time}'
@@ -131,6 +141,12 @@ class ProgressBar():
 
 if __name__ == "__main__":
     pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=False)
+    for incr in range(1,51):
+        pbar.display_progress(incr, f'incr [{incr}]')
+        time.sleep(.15)    
+
+    print('Progress bar with no pct complete...')
+    pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=False, show_pct=False)
     for incr in range(1,51):
         pbar.display_progress(incr, f'incr [{incr}]')
         time.sleep(.15)    
