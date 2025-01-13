@@ -21,7 +21,6 @@ Additionally, helper classes/namespaces provided:
 - **CursorShape**: Ansi codes for controlling cursor shape.
 
 """
-
 import os
 import re
 import signal
@@ -30,13 +29,17 @@ import time
 from enum import Enum
 from typing import Final, List, Tuple, Union
 
+from loguru import logger as LOGGER
+
 from dt_tools.misc.helpers import StringHelper
 from dt_tools.os.os_helper import OSHelper
-from loguru import logger as LOGGER
 
 if OSHelper.is_windows():
     import msvcrt
     from ctypes import byref, windll, wintypes  # noqa: F401
+else:
+    import termios
+    import tty
 
 # TODO:
 #   update _output_to_terminal to allow for printing to stderr OR stdout (default)
@@ -264,34 +267,11 @@ class ConsoleHelper():
         Returns:
             Cusor location: (row, col).
         """
-        row = -1
-        col = -1
         if OSHelper.is_windows():
-            valid_coords = False
-            val_errcnt = 0
-            while not valid_coords and val_errcnt < 3:
-                sys.stdout.write("\x1b[6n")
-                sys.stdout.flush()
-                buffer = bytes()
-                while msvcrt.kbhit():
-                    buffer += msvcrt.getch()
-                hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
-                # print(hex_loc)
-                token = hex_loc.split(';')
-                try:
-                    row = int(token[0])
-                    col = int(token[1])
-                    valid_coords = True
-                except ValueError as ve:
-                    val_errcnt += 1
-                    if val_errcnt == 3:
-                        LOGGER.debug(f'cursor_current_postion()-Invalid row/col (hex_loc): {hex_loc} | {token} - {ve}')
-        else:
-            row, col = os.popen('stty size', 'r').read().split()
-            row = int(row)
-            col = int(col)
+            return cls._get_windows_cursor_position()
+        
+        return cls._get_linux_cursor_position()
             
-        return (row, col)
 
     @classmethod
     def cursor_save_position(cls):
@@ -694,6 +674,58 @@ class ConsoleHelper():
                     token += '\x1b[%sm %s \x1b[0m' % (format, format)
                 print(token)
             print('\n')
+
+    @classmethod
+    def _get_windows_cursor_position(cls) -> Tuple[int, int]:
+        valid_coords = False
+        val_errcnt = 0
+        row: int = -1
+        col: int = -1
+        while not valid_coords and val_errcnt < 3:
+            sys.stdout.write("\x1b[6n")
+            sys.stdout.flush()
+            buffer = bytes()
+            while msvcrt.kbhit():
+                buffer += msvcrt.getch()
+            hex_loc = buffer.decode().replace('\x1b[','').replace('R','')
+            # print(hex_loc)
+            token = hex_loc.split(';')
+            try:
+                row = int(token[0])
+                col = int(token[1])
+                valid_coords = True
+            except ValueError as ve:
+                val_errcnt += 1
+                if val_errcnt == 3:
+                    LOGGER.debug(f'cursor_current_postion()-Invalid row/col (hex_loc): {hex_loc} | {token} - {ve}')
+        return row, col
+    
+    @classmethod
+    def _get_linux_cursor_position(cls) -> Tuple[int, int]:
+        """Gets the current cursor position on the terminal."""
+
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+
+        try:
+            tty.setraw(sys.stdin.fileno())
+            sys.stdout.write("\x1b[6n")
+            sys.stdout.flush()
+
+            response = ""
+            while True:
+                char = sys.stdin.read(1)
+                if char == "R":
+                    break
+                response += char
+
+            row, col = map(int, response[2:].split(";"))
+            return row, col
+
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)        
+
+
 
 # ==========================================================================================================
 class ConsoleInputHelper():
