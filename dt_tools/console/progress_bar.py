@@ -80,7 +80,6 @@ class ProgressBar():
         self._started = False
         self._elapsed_time = '00:00:00'
         self._finished = False
-        self._max_line_length = os.get_terminal_size().columns
         self.console = ConsoleHelper()
         LOGGER.trace('ProgressBar initialized.')
 
@@ -100,18 +99,30 @@ class ProgressBar():
 
         self.console.cursor_off()
         self._finished = False
-
+        term_columns = os.get_terminal_size().columns
         if ConsoleHelper.valid_console(): 
-            cur_percent = 100 * (current_increment / self._max_increments)
-            dsply_percent = f'{cur_percent:5.1f}%' if self._show_pct else ''
-            # dsply_percent = ("{0:5." + str(self._decimals) + "f}").format(cur_percent) if self._show_pct else ''
             filled_len = int(self._bar_len * current_increment // self._max_increments)
             bar = self._fill * filled_len + '-' * (self._bar_len - filled_len)
-            token = f'\r{self._caption} [{bar}] {dsply_percent} {suffix}'
+            
+            display_line = f'\r{self._caption} [{bar}]'
+            if self._show_pct and len(display_line) + 6 < term_columns:
+                cur_percent = 100 * (current_increment / self._max_increments)
+                dsply_percent = f'{cur_percent:5.1f}%'
+                display_line += f' {dsply_percent}'
+            
+            if len(suffix) > 0 and len(display_line) + len(suffix)+1 < term_columns:
+                display_line += f' {suffix}'
+
             self._elapsed_time = self._calculate_elapsed_time(dt.now(), self._start_time)
-            if self._show_elapsed:
-                token = f'{token} {self._elapsed_time}'
-            terminal_line = (token[:self._max_line_length-7] + '...' + token[-3:]) if len(token) > self._max_line_length else token
+            if self._show_elapsed and len(display_line) + len(self.elapsed_time) + 1 < term_columns:
+                display_line += f' {self._elapsed_time}'
+            
+            # if len(display_line) > self._term_columns:
+            #     terminal_line = (display_line[:self._term_columns-7] + '...' + display_line[-3:]) 
+            # else:
+            #     terminal_line = display_line
+            # terminal_line = (display_line[:self._term_columns-7] + '...' + display_line[-3:]) if len(display_line) > self._term_columns else display_line
+            terminal_line = display_line
             print(terminal_line, end = self._str_end, flush=True)
 
         if current_increment >= self._max_increments:
@@ -140,20 +151,23 @@ class ProgressBar():
 
 
 if __name__ == "__main__":
-    pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=False)
-    for incr in range(1,51):
+    print('')
+    b_len = 80
+    m_inc = 140
+    pbar = ProgressBar("Test bar", bar_length=b_len, max_increments=m_inc, show_elapsed=False)
+    for incr in range(1,m_inc+1):
         pbar.display_progress(incr, f'incr [{incr}]')
-        time.sleep(.15)    
+        time.sleep(.05)    
 
-    print('Progress bar with no pct complete...')
-    pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=False, show_pct=False)
-    for incr in range(1,51):
+    print('\nProgress bar with no pct complete...')
+    pbar = ProgressBar("Test bar", bar_length=b_len, max_increments=m_inc, show_elapsed=False, show_pct=False)
+    for incr in range(1,m_inc+1):
         pbar.display_progress(incr, f'incr [{incr}]')
-        time.sleep(.15)    
+        time.sleep(.05)    
 
-    print('Progress bar with elapsed time...')
-    pbar = ProgressBar("Test bar", bar_length=40, max_increments=50, show_elapsed=True)
-    for incr in range(1,51):
+    print('\nProgress bar with elapsed time...')
+    pbar = ProgressBar("Test bar", bar_length=b_len, max_increments=m_inc, show_elapsed=True)
+    for incr in range(1,m_inc+1):
         pbar.display_progress(incr, f'incr [{incr}]')
-        time.sleep(.15)
+        time.sleep(.05)
 
